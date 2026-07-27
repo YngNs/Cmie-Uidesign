@@ -1,0 +1,1267 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>电机试验分析软件 UI 概念方案 - Kimi K3</title>
+  <style>
+    *{box-sizing:border-box}
+    html,body{margin:0;width:100%;height:100%;overflow:hidden;font-family:"PingFang SC","Microsoft YaHei","Segoe UI",sans-serif;color:var(--text);background:var(--bg);letter-spacing:0;-webkit-font-smoothing:antialiased}
+    button{font:inherit;cursor:pointer}
+    table{width:100%;border-collapse:collapse;font-size:12px}
+    .app{width:100vw;height:100vh;display:grid;background:var(--bg)}
+    .num{font-family:"JetBrains Mono","Cascadia Mono",Consolas,monospace;font-variant-numeric:tabular-nums}
+    .badge{display:inline-flex;align-items:center;gap:6px;padding:3px 8px;border-radius:4px;font-size:10px;font-weight:700;letter-spacing:.3px}
+    .dot{width:6px;height:6px;border-radius:50%;background:currentColor;display:inline-block;flex-shrink:0}
+    .good{color:var(--good)} .warn{color:var(--warn)} .bad{color:var(--bad)} .accent{color:var(--accent)} .muted{color:var(--muted)}
+    .panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);min-width:0;min-height:0;display:flex;flex-direction:column;overflow:hidden}
+    .panel-title{height:36px;padding:0 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);font-size:12px;font-weight:700;flex-shrink:0}
+    .panel-title small{font-weight:400;color:var(--muted);font-size:10px}
+    .panel-body{flex:1;min-height:0;overflow:hidden}
+    .icon-btn{height:32px;padding:0 12px;border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:5px;display:inline-flex;align-items:center;gap:6px;font-size:11px}
+    .action{height:32px;padding:0 14px;border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:5px;display:inline-flex;align-items:center;justify-content:center;gap:6px;font-size:12px;font-weight:600}
+    .action.primary{background:var(--accent);border-color:var(--accent);color:var(--onAccent)}
+    .action.ghost{background:transparent}
+    .metric{padding:10px 14px;display:flex;flex-direction:column;justify-content:center;min-width:0}
+    .metric-label{font-size:10px;color:var(--muted);margin-bottom:4px;font-weight:600;letter-spacing:.5px;text-transform:uppercase}
+    .metric-value{font-size:22px;font-weight:700;line-height:1.1}
+    .metric-unit{font-size:10px;color:var(--muted);margin-left:3px;font-weight:500}
+    .metric-delta{font-size:10px;margin-top:3px}
+    .scheme-label{position:fixed;right:22px;bottom:18px;z-index:20;background:rgba(15,23,42,.92);color:#fff;padding:8px 14px;border-radius:4px;font-size:11px;letter-spacing:0;font-weight:600;box-shadow:0 4px 12px rgba(0,0,0,.3)}
+    .scheme-switch{position:fixed;right:14px;top:50%;z-index:30;transform:translateY(-50%);display:grid;gap:4px;padding:6px;background:rgba(15,23,42,.88);border:1px solid rgba(255,255,255,.16);border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.32);backdrop-filter:blur(8px)}
+    .scheme-switch button{width:36px;height:36px;border:1px solid rgba(255,255,255,.18);border-radius:5px;background:transparent;color:#cbd5e1;font-size:12px;font-weight:700;cursor:pointer;transition:background .15s,color .15s,border-color .15s}
+    .scheme-switch button:hover{background:rgba(255,255,255,.12);color:#fff}
+    .scheme-switch button.active{background:#fff;color:#17202a;border-color:#fff}
+
+    /* ============== Scheme A: Industrial Command Center (dark amber) ============== */
+    body.scheme-a{--bg:#0e1418;--panel:#161d22;--subtle:#1d262c;--text:#e6edf0;--muted:#7a8b92;--line:#2a363d;--accent:#f0a51a;--onAccent:#1a1305;--good:#3ecf8e;--warn:#f0a51a;--bad:#f35b62;--selected:#2a261d;--radius:4px}
+    .scheme-a .app{grid-template-columns:240px 1fr;grid-template-rows:64px 1fr 38px}
+    .scheme-a header{grid-column:1/3;display:flex;align-items:center;padding:0 18px;background:linear-gradient(180deg,#1a2126 0%,#141a1e 100%);border-bottom:1px solid var(--line)}
+    .scheme-a .brand{display:flex;align-items:center;gap:11px;font-weight:700}
+    .scheme-a .brand-mark{width:34px;height:34px;display:grid;place-items:center;background:linear-gradient(135deg,#f0a51a,#c47a13);color:#1a1305;border-radius:6px;font-size:18px;font-weight:800}
+    .scheme-a .head-title{margin-left:32px}
+    .scheme-a .head-title strong{font-size:14px;display:block}
+    .scheme-a .head-title small{display:block;color:var(--muted);font-size:10px;margin-top:2px;font-family:Consolas,monospace}
+    .scheme-a .head-strip{margin-left:auto;display:flex;align-items:center;gap:14px;font-size:11px}
+    .scheme-a .head-strip .item{display:flex;align-items:center;gap:5px;color:var(--muted)}
+    .scheme-a .head-strip .item strong{color:var(--text);font-family:Consolas,monospace}
+    .scheme-a aside{background:#0a0e11;border-right:1px solid var(--line);grid-row:2/4;padding:14px 10px;overflow:hidden}
+    .scheme-a aside .nav-section{font-size:10px;color:#5b6e76;font-weight:700;padding:14px 11px 7px;letter-spacing:1px;text-transform:uppercase}
+    .scheme-a aside .nav-item{height:38px;padding:0 11px;display:flex;align-items:center;gap:10px;border-radius:4px;color:#9aacb3;font-size:12px;margin:2px 0;cursor:pointer}
+    .scheme-a aside .nav-item.active{background:linear-gradient(90deg,#3a2a10 0%,#1d1812 100%);color:#f0a51a;font-weight:700;border-left:2px solid #f0a51a;padding-left:9px}
+    .scheme-a aside .nav-icon{width:18px;text-align:center;font-size:14px}
+    .scheme-a aside .nav-count{margin-left:auto;font-size:10px;background:#1f2930;padding:2px 6px;border-radius:3px;color:#9aacb3}
+    .scheme-a main{padding:14px;display:grid;grid-template-rows:90px 1fr 220px;gap:12px;min-height:0;min-width:0}
+    .scheme-a .kpi-row{display:grid;grid-template-columns:repeat(7,1fr);gap:10px}
+    .scheme-a .kpi-row .panel{padding:0}
+    .scheme-a .kpi-row .metric{padding:14px 16px;position:relative}
+    .scheme-a .kpi-row .metric::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--accent);border-radius:3px 0 0 3px}
+    .scheme-a .kpi-row .metric.warn::before{background:var(--warn)}
+    .scheme-a .kpi-row .metric.good::before{background:var(--good)}
+    .scheme-a .kpi-row .metric.bad::before{background:var(--bad)}
+    .scheme-a .kpi-row .metric-value{font-size:24px}
+    .scheme-a .middle{display:grid;grid-template-columns:1fr 1.4fr 1fr;gap:12px;min-height:0}
+    .scheme-a .middle .panel{overflow:hidden}
+    .scheme-a .test-list{padding:6px 0;overflow:auto}
+    .scheme-a .test-group{padding:8px 14px 4px;color:var(--muted);font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase}
+    .scheme-a .test-item{height:32px;padding:0 14px;display:flex;align-items:center;gap:8px;font-size:12px;color:#9aacb3;border-left:2px solid transparent}
+    .scheme-a .test-item.active{background:#1f1812;color:#f0a51a;font-weight:600;border-left-color:#f0a51a}
+    .scheme-a .test-item.done{color:#5b6e76}
+    .scheme-a .test-item .check{margin-left:auto;font-size:11px}
+    .scheme-a .test-item .check.done{color:#3ecf8e}
+    .scheme-a .test-item .check.doing{color:#f0a51a}
+    .scheme-a .chart-wrap{position:relative;flex:1;min-height:0}
+    .scheme-a .chart-wrap canvas{position:absolute;inset:0;width:100%;height:100%}
+    .scheme-a .chart-legend{position:absolute;top:8px;right:12px;display:flex;gap:14px;font-size:10px;color:var(--muted)}
+    .scheme-a .chart-legend i{display:inline-block;width:18px;height:2px;margin-right:5px;vertical-align:middle}
+    .scheme-a .dev-grid{padding:10px 14px;overflow:auto;display:grid;grid-template-columns:1fr 1fr;gap:8px;align-content:start}
+    .scheme-a .dev-card{padding:9px 11px;background:#0f1518;border:1px solid var(--line);border-radius:4px;display:flex;align-items:center;gap:8px;font-size:11px}
+    .scheme-a .dev-card .dot{width:8px;height:8px}
+    .scheme-a .dev-card .name{font-weight:600;color:var(--text)}
+    .scheme-a .dev-card .meta{color:var(--muted);font-size:10px;margin-left:auto}
+    .scheme-a .dev-card.warn{border-color:#5c4a1a;background:#1d1812}
+    .scheme-a .dev-card.bad{border-color:#5c2a2d;background:#1d1517}
+    .scheme-a .bottom-row{display:grid;grid-template-columns:1.6fr 1fr;gap:12px;min-height:0}
+    .scheme-a .bottom-row .panel{overflow:hidden}
+    .scheme-a .alarm-list{padding:4px 14px;overflow:auto;font-family:Consolas,monospace}
+    .scheme-a .alarm{display:grid;grid-template-columns:18px 1fr auto;gap:8px;align-items:center;padding:5px 0;border-bottom:1px solid var(--line);font-size:11px}
+    .scheme-a .alarm time{color:var(--muted);font-size:10px}
+    .scheme-a footer{grid-column:2;display:flex;align-items:center;padding:0 14px;background:#0a0e11;border-top:1px solid var(--line);gap:16px;font-size:11px}
+    .scheme-a footer .right{margin-left:auto;display:flex;align-items:center;gap:14px}
+    .scheme-a .device{display:flex;align-items:center;gap:6px;color:var(--muted)}
+    .scheme-a .device strong{color:var(--text)}
+
+    /* ============== Scheme B: Minimalist Whiteboard (light) ============== */
+    body.scheme-b{--bg:#fafbfc;--panel:#ffffff;--subtle:#f3f6f8;--text:#1a2330;--muted:#6b7a85;--line:#e3e8ed;--accent:#2b6cff;--onAccent:#fff;--good:#18a957;--warn:#e08a1c;--bad:#e2494b;--selected:#eaf1fe;--radius:10px}
+    .scheme-b .app{grid-template-rows:68px 84px 1fr 44px}
+    .scheme-b header{display:flex;align-items:center;padding:0 28px;background:#fff;border-bottom:1px solid var(--line)}
+    .scheme-b .brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:15px}
+    .scheme-b .brand-mark{width:32px;height:32px;display:grid;place-items:center;background:linear-gradient(135deg,#2b6cff,#0e4ec7);color:#fff;border-radius:8px;font-size:16px;font-weight:800}
+    .scheme-b .head-nav{display:flex;gap:24px;margin-left:42px;font-size:13px;color:var(--muted)}
+    .scheme-b .head-nav .active{color:var(--accent);font-weight:700}
+    .scheme-b .head-right{margin-left:auto;display:flex;align-items:center;gap:10px}
+    .scheme-b .stepper{display:grid;grid-template-columns:repeat(6,1fr);padding:18px 80px;background:#fff;border-bottom:1px solid var(--line)}
+    .scheme-b .step{position:relative;text-align:center;font-size:12px;color:var(--muted)}
+    .scheme-b .step:before{content:"";position:absolute;top:14px;left:-50%;width:100%;height:2px;background:var(--line)}
+    .scheme-b .step:first-child:before{display:none}
+    .scheme-b .step i{position:relative;z-index:1;margin:0 auto 7px;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:var(--subtle);font-style:normal;font-size:11px;font-weight:700;color:var(--muted)}
+    .scheme-b .step.done i{background:var(--good);color:#fff}
+    .scheme-b .step.current{color:var(--accent);font-weight:700}
+    .scheme-b .step.current i{background:var(--accent);color:#fff;box-shadow:0 0 0 4px #dbe8fa}
+    .scheme-b main{padding:18px 28px 20px;display:grid;grid-template-columns:280px 1fr 320px;gap:14px;min-height:0}
+    .scheme-b .left-col{display:grid;grid-template-rows:200px minmax(0,1fr);gap:14px;min-height:0}
+    .scheme-b .left-col .panel:last-child{overflow:hidden}
+    .scheme-b .motor-card{padding:18px}
+    .scheme-b .motor-card .label{font-size:11px;color:var(--muted);margin-bottom:4px}
+    .scheme-b .motor-card .name{font-size:18px;font-weight:800;margin-bottom:4px}
+    .scheme-b .motor-card .id{font-size:11px;color:var(--muted);font-family:Consolas,monospace}
+    .scheme-b .motor-card .params{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-top:16px}
+    .scheme-b .motor-card .params .item{font-size:11px}
+    .scheme-b .motor-card .params .item span{display:block;color:var(--muted);font-size:10px;margin-bottom:2px}
+    .scheme-b .motor-card .params .item b{font-size:14px}
+    .scheme-b .middle-col{display:grid;grid-template-rows:56px 110px 1fr 130px;gap:12px;min-height:0}
+    .scheme-b .title-row{display:flex;align-items:center}
+    .scheme-b .title-row h1{font-size:20px;margin:0;font-weight:800}
+    .scheme-b .title-row .sub{color:var(--muted);font-size:12px;margin-top:3px;margin-left:14px}
+    .scheme-b .title-row .actions{margin-left:auto;display:flex;gap:8px}
+    .scheme-b .kpi-row{display:grid;grid-template-columns:repeat(5,1fr);gap:0}
+    .scheme-b .kpi-row .panel{padding:0;overflow:hidden}
+    .scheme-b .kpi-row .metric{padding:14px 16px;border-right:1px solid var(--line)}
+    .scheme-b .kpi-row .metric:last-child{border-right:0}
+    .scheme-b .kpi-row .metric-value{font-size:22px}
+    .scheme-b .data-panel{overflow:hidden}
+    .scheme-b table th{height:34px;background:var(--subtle);text-align:left;color:var(--muted);font-weight:600;padding:0 14px;font-size:11px}
+    .scheme-b table td{height:32px;padding:0 14px;border-bottom:1px solid var(--line)}
+    .scheme-b table tbody tr:hover td{background:var(--subtle)}
+    .scheme-b table tbody tr.selected td{background:var(--selected)}
+    .scheme-b .bottom-split{display:grid;grid-template-columns:1.5fr 1fr;gap:12px;min-height:0}
+    .scheme-b .right-col{display:grid;grid-template-rows:200px 1fr 100px;gap:14px;min-height:0}
+    .scheme-b .right-col .panel{overflow:hidden}
+    .scheme-b .dev-list{padding:6px 14px;overflow:auto}
+    .scheme-b .dev-item{display:flex;align-items:center;padding:10px 0;border-bottom:1px solid var(--line);font-size:12px}
+    .scheme-b .dev-item .name{font-weight:600}
+    .scheme-b .dev-item .meta{color:var(--muted);font-size:10px;margin-left:8px}
+    .scheme-b .dev-item .badge{margin-left:auto}
+    .scheme-b .report-list{padding:4px 14px;overflow:auto}
+    .scheme-b .report-item{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--line);font-size:12px}
+    .scheme-b .report-item .icon{width:28px;height:28px;background:var(--subtle);border-radius:6px;display:grid;place-items:center;font-size:12px;color:var(--accent)}
+    .scheme-b .report-item .name{font-weight:600}
+    .scheme-b .report-item .meta{color:var(--muted);font-size:10px;margin-top:2px}
+    .scheme-b .report-item .action{margin-left:auto;height:28px;padding:0 10px;font-size:11px}
+    .scheme-b .tip{padding:14px;background:#fff8e8;border:1px solid #f1d28f;border-radius:8px;color:#775317;font-size:11px;line-height:1.7}
+    .scheme-b footer{display:flex;align-items:center;padding:0 28px;background:#fff;border-top:1px solid var(--line);font-size:11px;color:var(--muted);gap:18px}
+    .scheme-b footer .right{margin-left:auto;display:flex;align-items:center;gap:14px}
+
+    /* ============== Scheme C: Cyberpunk Neon (dark neon) ============== */
+    body.scheme-c{--bg:#07060f;--panel:#0e0a1d;--subtle:#15102a;--text:#e8e9ff;--muted:#7c75a8;--line:#1f1a3a;--accent:#00e5ff;--onAccent:#07060f;--good:#00ffa3;--warn:#ffb627;--bad:#ff2e7e;--selected:#1c1538;--radius:2px}
+    .scheme-c{background:radial-gradient(ellipse at 20% 0%,#1a0830 0%,transparent 50%),radial-gradient(ellipse at 90% 90%,#080620 0%,transparent 50%),#07060f}
+    .scheme-c .app{grid-template-columns:80px 1fr;grid-template-rows:60px 1fr 36px}
+    .scheme-c header{grid-column:1/3;display:flex;align-items:center;padding:0 20px;background:rgba(15,10,29,.85);border-bottom:1px solid var(--line);backdrop-filter:blur(8px)}
+    .scheme-c .brand{display:flex;align-items:center;gap:11px;font-weight:700}
+    .scheme-c .brand-mark{width:36px;height:36px;display:grid;place-items:center;background:linear-gradient(135deg,#00e5ff,#ff2e7e);color:#07060f;border-radius:6px;font-size:18px;font-weight:900;box-shadow:0 0 18px rgba(0,229,255,.55)}
+    .scheme-c .brand-text{font-size:13px;letter-spacing:2px}
+    .scheme-c .brand-text small{display:block;color:#ff2e7e;font-size:9px;letter-spacing:3px;margin-top:1px}
+    .scheme-c .head-stats{margin-left:auto;display:flex;align-items:center;gap:20px;font-size:11px;font-family:Consolas,monospace}
+    .scheme-c .head-stats .stat{display:flex;flex-direction:column;align-items:flex-end;line-height:1.1}
+    .scheme-c .head-stats .stat .v{color:var(--accent);font-size:13px;font-weight:700}
+    .scheme-c .head-stats .stat .l{color:var(--muted);font-size:9px;letter-spacing:1px;margin-top:2px}
+    .scheme-c aside{grid-row:2/4;background:rgba(15,10,29,.7);border-right:1px solid var(--line);padding:14px 8px;display:flex;flex-direction:column;gap:6px}
+    .scheme-c aside .nav-item{height:60px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:6px;border-radius:4px;color:#7c75a8;font-size:10px;letter-spacing:1px;cursor:pointer;border:1px solid transparent}
+    .scheme-c aside .nav-item .icon{font-size:20px}
+    .scheme-c aside .nav-item.active{background:linear-gradient(180deg,rgba(0,229,255,.18),rgba(0,229,255,.02));color:var(--accent);border-color:rgba(0,229,255,.4);box-shadow:0 0 12px rgba(0,229,255,.3) inset,0 0 12px rgba(0,229,255,.2)}
+    .scheme-c main{padding:14px;display:grid;grid-template-rows:90px 1fr 200px;gap:12px;min-height:0;min-width:0}
+    .scheme-c .kpi-row{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}
+    .scheme-c .kpi-row .panel{position:relative;background:linear-gradient(135deg,rgba(0,229,255,.05) 0%,rgba(255,46,126,.05) 100%);border:1px solid rgba(0,229,255,.3);box-shadow:0 0 14px rgba(0,229,255,.12) inset}
+    .scheme-c .kpi-row .metric{padding:13px 16px;position:relative;overflow:hidden}
+    .scheme-c .kpi-row .metric::after{content:"";position:absolute;top:0;right:0;width:60px;height:60px;background:radial-gradient(circle,rgba(0,229,255,.18) 0%,transparent 70%);pointer-events:none}
+    .scheme-c .kpi-row .metric-label{color:#7c75a8;letter-spacing:2px;font-size:9px}
+    .scheme-c .kpi-row .metric-value{color:var(--accent);font-size:24px;text-shadow:0 0 14px rgba(0,229,255,.6)}
+    .scheme-c .kpi-row .metric.warn .metric-value{color:#ffb627;text-shadow:0 0 14px rgba(255,182,39,.6)}
+    .scheme-c .kpi-row .metric.good .metric-value{color:#00ffa3;text-shadow:0 0 14px rgba(0,255,163,.6)}
+    .scheme-c .middle{display:grid;grid-template-columns:1fr 1fr 280px;gap:12px;min-height:0}
+    .scheme-c .middle .panel{border:1px solid rgba(0,229,255,.2);box-shadow:0 0 14px rgba(0,229,255,.08) inset}
+    .scheme-c .panel-title{color:var(--accent);letter-spacing:1px}
+    .scheme-c .panel-title small{color:#7c75a8}
+    .scheme-c .chart-wrap{position:relative;flex:1;min-height:0}
+    .scheme-c .chart-wrap canvas{position:absolute;inset:0;width:100%;height:100%}
+    .scheme-c .grid-bg{position:absolute;inset:0;background-image:linear-gradient(rgba(0,229,255,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(0,229,255,.07) 1px,transparent 1px);background-size:30px 30px;pointer-events:none}
+    .scheme-c .right-stack{display:grid;grid-template-rows:1fr 1fr 1fr;gap:10px;min-height:0}
+    .scheme-c .radar{padding:18px;display:grid;place-items:center}
+    .scheme-c .ring{width:130px;height:130px;border-radius:50%;background:conic-gradient(#00ffa3 0 72%,#00e5ff 72% 88%,#ff2e7e 88% 96%,#1f1a3a 96%);position:relative;display:grid;place-items:center;box-shadow:0 0 30px rgba(0,255,163,.4)}
+    .scheme-c .ring::after{content:"94.2%";width:96px;height:96px;border-radius:50%;background:#0e0a1d;display:grid;place-items:center;font-size:24px;font-weight:800;color:#00ffa3;font-family:Consolas,monospace}
+    .scheme-c .ring-label{text-align:center;margin-top:8px;font-size:11px;color:#7c75a8;letter-spacing:2px}
+    .scheme-c .events{padding:8px 12px;overflow:auto}
+    .scheme-c .event{display:grid;grid-template-columns:8px 1fr auto;gap:8px;align-items:center;padding:6px 0;border-bottom:1px solid var(--line);font-size:10px;font-family:Consolas,monospace}
+    .scheme-c .event time{color:#7c75a8}
+    .scheme-c .event.ok{color:#00ffa3}
+    .scheme-c .event.warn{color:#ffb627}
+    .scheme-c .event.bad{color:#ff2e7e}
+    .scheme-c .bottom-row{display:grid;grid-template-columns:1.4fr 1fr;gap:12px;min-height:0}
+    .scheme-c footer{grid-column:2;display:flex;align-items:center;padding:0 16px;background:rgba(15,10,29,.85);border-top:1px solid var(--line);gap:16px;font-size:11px;font-family:Consolas,monospace}
+    .scheme-c footer .right{margin-left:auto;display:flex;align-items:center;gap:14px}
+
+    /* ============== Scheme D: Academic Lab Emerald (light) ============== */
+    body.scheme-d{--bg:#eef0ee;--panel:#fbfcfb;--subtle:#eef1ed;--text:#1a2624;--muted:#5d6d68;--line:#c8d2cc;--accent:#0d7a4f;--onAccent:#fff;--good:#0d7a4f;--warn:#a8651b;--bad:#b03a3e;--selected:#e2efe8;--radius:3px}
+    .scheme-d .app{grid-template-rows:46px 1fr 28px}
+    .scheme-d header{display:flex;align-items:center;padding:0 14px;background:#0d7a4f;color:#f2f8f4;border-bottom:1px solid #0a5e3c}
+    .scheme-d .brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:14px}
+    .scheme-d .brand-mark{width:26px;height:26px;display:grid;place-items:center;background:#fff;color:#0d7a4f;border-radius:3px;font-size:13px;font-weight:900}
+    .scheme-d .menu{display:flex;height:100%;margin-left:24px}
+    .scheme-d .menu span{display:flex;align-items:center;padding:0 14px;font-size:12px;color:#cfe3d9;cursor:pointer}
+    .scheme-d .menu span.active{background:#0a5e3c;color:#fff}
+    .scheme-d .head-right{margin-left:auto;display:flex;align-items:center;gap:14px;font-size:11px}
+    .scheme-d .head-right .item{display:flex;align-items:center;gap:5px;color:#cfe3d9}
+    .scheme-d .head-right .item strong{color:#fff}
+    .scheme-d main{display:grid;grid-template-columns:260px 1fr 310px;grid-template-rows:1fr 240px;gap:5px;padding:6px;min-height:0;background:var(--bg)}
+    .scheme-d .panel{border-radius:3px;border-color:var(--line)}
+    .scheme-d .panel-title{height:32px;background:#e2eae5;border-bottom-color:var(--line);font-size:12px}
+    .scheme-d .tabs{display:flex;border-bottom:1px solid var(--line);background:#e8eee9}
+    .scheme-d .tab{padding:7px 14px;font-size:11px;border-right:1px solid var(--line);color:var(--muted);cursor:pointer}
+    .scheme-d .tab.active{background:var(--panel);color:#0d7a4f;font-weight:700;border-top:2px solid #0d7a4f}
+    .scheme-d .nav-left{grid-row:1/3;display:flex;flex-direction:column;overflow:hidden}
+    .scheme-d .nav-left .tree-body{padding:6px 0;overflow:auto;flex:1}
+    .scheme-d .tree-group{padding:6px 12px 3px;font-size:10px;color:#0d7a4f;font-weight:700;letter-spacing:1px;text-transform:uppercase}
+    .scheme-d .tree-item{height:28px;padding:0 12px 0 24px;display:flex;align-items:center;gap:6px;font-size:11px;color:#3d4b46;cursor:pointer}
+    .scheme-d .tree-item.active{background:#d4e8dc;color:#0d7a4f;font-weight:600}
+    .scheme-d .tree-item.done{color:#7a8a83}
+    .scheme-d .tree-item .check{margin-left:auto;font-size:10px}
+    .scheme-d .tree-item .check.done{color:#0d7a4f}
+    .scheme-d .work-area{grid-row:1/3;display:flex;flex-direction:column;overflow:hidden;gap:5px}
+    .scheme-d .work-top{flex:1;display:flex;flex-direction:column;overflow:hidden}
+    .scheme-d .compact-motor{display:grid;grid-template-columns:repeat(7,1fr);background:#f3f7f4;border-bottom:1px solid var(--line);font-size:10px}
+    .scheme-d .compact-motor div{padding:8px 10px;border-right:1px solid var(--line)}
+    .scheme-d .compact-motor div:last-child{border-right:0}
+    .scheme-d .compact-motor span{color:var(--muted);display:block;margin-bottom:2px;font-size:9px}
+    .scheme-d .compact-motor b{font-size:12px;color:var(--text);font-weight:700}
+    .scheme-d table th{height:30px;background:#e8eee9;text-align:left;color:var(--muted);font-weight:700;padding:0 10px;font-size:10px;border-bottom:1px solid var(--line);text-transform:uppercase;letter-spacing:.5px}
+    .scheme-d table td{height:28px;padding:0 10px;border-bottom:1px solid var(--line);font-size:11px}
+    .scheme-d table tbody tr:nth-child(odd) td{background:#f6f9f7}
+    .scheme-d table tbody tr.selected td{background:#d4e8dc}
+    .scheme-d table tbody tr.selected td:first-child{box-shadow:inset 3px 0 0 #0d7a4f}
+    .scheme-d .right-side{grid-row:1/3;display:flex;flex-direction:column;overflow:hidden;gap:5px}
+    .scheme-d .analysis{padding:10px 12px;overflow:auto}
+    .scheme-d .analysis .group{margin-bottom:12px}
+    .scheme-d .analysis .gtitle{font-size:10px;color:#0d7a4f;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;padding-bottom:3px;border-bottom:1px solid var(--line)}
+    .scheme-d .analysis .row{display:grid;grid-template-columns:1fr 90px;align-items:center;padding:3px 0;font-size:11px}
+    .scheme-d .analysis .row .l{color:var(--muted)}
+    .scheme-d .analysis .row .v{text-align:right;font-weight:700;color:var(--text)}
+    .scheme-d .analysis .row.important .v{color:#0d7a4f;font-size:13px}
+    .scheme-d .chart-area{height:100%;position:relative}
+    .scheme-d .chart-area canvas{position:absolute;inset:0;width:100%;height:100%}
+    .scheme-d .log-area{padding:8px 12px;overflow:auto;font-family:Consolas,monospace;font-size:10px;line-height:1.7}
+    .scheme-d .log-area .line{display:grid;grid-template-columns:62px 70px 1fr;gap:8px}
+    .scheme-d .log-area .line time{color:var(--muted)}
+    .scheme-d .log-area .line .tag{color:#0d7a4f;font-weight:700}
+    .scheme-d .log-area .line .tag.warn{color:#a8651b}
+    .scheme-d .log-area .line .tag.bad{color:#b03a3e}
+    .scheme-d footer{display:flex;align-items:center;padding:0 14px;background:#0d7a4f;color:#cfe3d9;gap:18px;font-size:10px}
+    .scheme-d footer .right{margin-left:auto}
+
+    /* ============== Scheme E: Glassmorphism Gradient (dark blue-purple) ============== */
+    body.scheme-e{--bg:#0a0d2e;--panel:rgba(255,255,255,0.04);--subtle:rgba(255,255,255,0.02);--text:#e7eaf6;--muted:#8a93b8;--line:rgba(255,255,255,0.08);--accent:#7c5cff;--onAccent:#fff;--good:#3ddc97;--warn:#ffb547;--bad:#ff5a72;--selected:rgba(124,92,255,0.18);--radius:14px}
+    .scheme-e{background:linear-gradient(135deg,#0a0d2e 0%,#1a0d3a 50%,#0d1a3a 100%)}
+    .scheme-e::before{content:"";position:fixed;inset:0;background:radial-gradient(ellipse 800px 400px at 10% 10%,rgba(124,92,255,.4),transparent 60%),radial-gradient(ellipse 600px 400px at 90% 80%,rgba(61,220,151,.2),transparent 60%),radial-gradient(ellipse 500px 300px at 80% 10%,rgba(255,90,114,.2),transparent 60%);pointer-events:none;z-index:0}
+    .scheme-e .app{grid-template-rows:72px 1fr 40px;position:relative;z-index:1;background:transparent}
+    .scheme-e header{display:flex;align-items:center;padding:0 24px;background:rgba(255,255,255,.04);border-bottom:1px solid var(--line);backdrop-filter:blur(20px)}
+    .scheme-e .brand{display:flex;align-items:center;gap:12px;font-weight:700;font-size:15px}
+    .scheme-e .brand-mark{width:36px;height:36px;display:grid;place-items:center;background:linear-gradient(135deg,#7c5cff,#3ddc97);color:#fff;border-radius:10px;font-size:18px;font-weight:800;box-shadow:0 4px 14px rgba(124,92,255,.5)}
+    .scheme-e .head-nav{display:flex;gap:6px;margin-left:32px}
+    .scheme-e .head-nav span{padding:8px 16px;border-radius:8px;font-size:12px;color:var(--muted);cursor:pointer}
+    .scheme-e .head-nav span.active{background:rgba(124,92,255,.18);color:#fff;font-weight:600}
+    .scheme-e .head-right{margin-left:auto;display:flex;align-items:center;gap:10px}
+    .scheme-e .head-right .icon-btn{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.08);color:#e7eaf6}
+    .scheme-e .head-right .icon-btn.primary{background:linear-gradient(135deg,#7c5cff,#5d3eff);border-color:transparent;color:#fff;font-weight:600}
+    .scheme-e main{padding:16px 24px;display:grid;grid-template-rows:90px 1fr;gap:14px;min-height:0;min-width:0;background:transparent}
+    .scheme-e .kpi-row{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+    .scheme-e .kpi-row .panel{background:rgba(255,255,255,.06);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.1);box-shadow:0 8px 32px rgba(0,0,0,.2);position:relative;overflow:hidden}
+    .scheme-e .kpi-row .panel::before{content:"";position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.3),transparent)}
+    .scheme-e .kpi-row .metric{padding:14px 16px}
+    .scheme-e .kpi-row .metric-label{color:var(--muted);font-size:10px;letter-spacing:1px}
+    .scheme-e .kpi-row .metric-value{font-size:24px;background:linear-gradient(135deg,#fff,#7c5cff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .scheme-e .kpi-row .metric.warn .metric-value{background:linear-gradient(135deg,#ffb547,#ff8c47);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .scheme-e .kpi-row .metric.good .metric-value{background:linear-gradient(135deg,#3ddc97,#7c5cff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .scheme-e .work-grid{display:grid;grid-template-columns:1fr 1fr 1.2fr;gap:12px;min-height:0}
+    .scheme-e .work-grid .panel{background:rgba(255,255,255,.05);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.1);box-shadow:0 8px 32px rgba(0,0,0,.2);overflow:hidden}
+    .scheme-e .panel-title{background:transparent;border-bottom-color:rgba(255,255,255,.06);color:#e7eaf6}
+    .scheme-e .panel-title small{color:var(--muted)}
+    .scheme-e .left-stack{display:grid;grid-template-rows:1fr 1fr;gap:12px;min-height:0}
+    .scheme-e .left-stack .panel{overflow:hidden}
+    .scheme-e .test-tree{padding:8px 0;overflow:auto}
+    .scheme-e .test-tree .group{padding:8px 16px 4px;color:var(--muted);font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase}
+    .scheme-e .test-tree .item{height:34px;padding:0 16px;display:flex;align-items:center;gap:8px;font-size:12px;color:#c8cde0;border-radius:6px;margin:0 8px;cursor:pointer}
+    .scheme-e .test-tree .item.active{background:linear-gradient(90deg,rgba(124,92,255,.25),rgba(124,92,255,.05));color:#fff;font-weight:600}
+    .scheme-e .test-tree .item .check{margin-left:auto}
+    .scheme-e .test-tree .item .check.done{color:#3ddc97}
+    .scheme-e .test-tree .item .check.doing{color:#ffb547}
+    .scheme-e .chart-wrap{position:relative;flex:1;min-height:0}
+    .scheme-e .chart-wrap canvas{position:absolute;inset:0;width:100%;height:100%}
+    .scheme-e .right-stack{display:grid;grid-template-rows:1fr 1fr;gap:12px;min-height:0}
+    .scheme-e .dev-card{padding:10px 14px;display:flex;align-items:center;gap:10px;border-bottom:1px solid rgba(255,255,255,.05);font-size:12px}
+    .scheme-e .dev-card .icon{width:32px;height:32px;border-radius:8px;background:rgba(124,92,255,.18);display:grid;place-items:center;color:#7c5cff;font-size:14px}
+    .scheme-e .dev-card .info .name{font-weight:600;color:#e7eaf6}
+    .scheme-e .dev-card .info .meta{color:var(--muted);font-size:10px;margin-top:2px}
+    .scheme-e .dev-card .badge{margin-left:auto}
+    .scheme-e .action-grid{padding:12px;display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    .scheme-e .action-grid .action{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.1);color:#e7eaf6}
+    .scheme-e .action-grid .action.primary{background:linear-gradient(135deg,#7c5cff,#5d3eff);border-color:transparent}
+    .scheme-e footer{display:flex;align-items:center;padding:0 24px;background:rgba(0,0,0,.3);backdrop-filter:blur(20px);border-top:1px solid var(--line);gap:18px;font-size:11px;color:var(--muted)}
+    .scheme-e footer .right{margin-left:auto;display:flex;align-items:center;gap:12px}
+    .scheme-e .scheme-label{background:rgba(124,92,255,.85)}
+
+    /* ============== Scheme F: Warm Engineering (warm high-density) ============== */
+    body.scheme-f{--bg:#1f1a17;--panel:#2a2520;--subtle:#332c25;--text:#f0e8dc;--muted:#9c8e7e;--line:#4a3e34;--accent:#e87a3a;--onAccent:#1f1108;--good:#7ab95a;--warn:#e8c03a;--bad:#e8554d;--selected:#3a2e1e;--radius:3px}
+    .scheme-f .app{grid-template-rows:42px 36px 1fr 28px}
+    .scheme-f header{display:flex;align-items:center;padding:0 12px;background:linear-gradient(180deg,#3a302a,#2a2520);border-bottom:1px solid #4a3e34}
+    .scheme-f .brand{display:flex;align-items:center;gap:9px;font-weight:700;font-size:13px}
+    .scheme-f .brand-mark{width:24px;height:24px;display:grid;place-items:center;background:linear-gradient(135deg,#e87a3a,#c45a1a);color:#fff;border-radius:3px;font-size:12px;font-weight:900}
+    .scheme-f .menu{display:flex;height:100%;margin-left:18px}
+    .scheme-f .menu span{display:flex;align-items:center;padding:0 12px;font-size:11px;color:#c4b8a8;cursor:pointer}
+    .scheme-f .menu span.active{background:linear-gradient(180deg,#e87a3a,#c45a1a);color:#fff;font-weight:700}
+    .scheme-f .head-right{margin-left:auto;display:flex;align-items:center;gap:12px;font-size:11px}
+    .scheme-f .head-right .badge{background:rgba(232,122,58,.2);color:#ffb380}
+    .scheme-f .toolbar{display:flex;align-items:center;padding:0 8px;background:#221c18;border-bottom:1px solid var(--line);gap:4px}
+    .scheme-f .toolbar .action{height:24px;padding:0 8px;font-size:10px;background:#332c25;border-color:#4a3e34;color:#d4c8b8;border-radius:2px}
+    .scheme-f .toolbar .action.primary{background:linear-gradient(180deg,#e87a3a,#c45a1a);border-color:#c45a1a;color:#fff}
+    .scheme-f .toolbar .action.danger{color:#ff8a7e}
+    .scheme-f .toolbar-sep{width:1px;height:16px;background:#4a3e34;margin:0 3px}
+    .scheme-f .toolbar .label{margin-left:auto;font-size:10px;color:var(--muted);font-family:Consolas,monospace}
+    .scheme-f main{display:grid;grid-template-columns:240px 1fr 290px;grid-template-rows:1fr 200px;gap:4px;padding:4px;min-height:0;background:#1a1612}
+    .scheme-f .panel{background:var(--panel);border:1px solid var(--line);border-radius:3px;overflow:hidden}
+    .scheme-f .panel-title{height:30px;background:#332c25;border-bottom:1px solid var(--line);font-size:11px;padding:0 10px}
+    .scheme-f .panel-title small{color:var(--muted)}
+    .scheme-f .navigator{grid-row:1/3;display:flex;flex-direction:column;overflow:hidden}
+    .scheme-f .navigator .tabs{display:flex;border-bottom:1px solid var(--line);background:#2a2520}
+    .scheme-f .navigator .tab{padding:6px 11px;font-size:10px;border-right:1px solid var(--line);color:var(--muted);cursor:pointer}
+    .scheme-f .navigator .tab.active{background:var(--panel);color:#e87a3a;font-weight:700;border-top:2px solid #e87a3a}
+    .scheme-f .navigator .body{padding:4px 0;overflow:auto;flex:1}
+    .scheme-f .navigator .group{padding:6px 10px 3px;font-size:9px;color:#e87a3a;font-weight:700;letter-spacing:1px;text-transform:uppercase}
+    .scheme-f .navigator .item{height:24px;padding:0 10px 0 22px;display:flex;align-items:center;gap:6px;font-size:10px;color:#c4b8a8;cursor:pointer}
+    .scheme-f .navigator .item.active{background:#3a2e1e;color:#ffb380;font-weight:600}
+    .scheme-f .navigator .item .check{margin-left:auto;font-size:9px}
+    .scheme-f .navigator .item .check.done{color:#7ab95a}
+    .scheme-f .work-area{grid-row:1/3;display:flex;flex-direction:column;overflow:hidden;gap:4px}
+    .scheme-f .work-top{flex:1;display:flex;flex-direction:column;overflow:hidden}
+    .scheme-f .compact-motor{display:grid;grid-template-columns:repeat(6,1fr);background:#332c25;border-bottom:1px solid var(--line);font-size:10px}
+    .scheme-f .compact-motor div{padding:7px 10px;border-right:1px solid var(--line)}
+    .scheme-f .compact-motor div:last-child{border-right:0}
+    .scheme-f .compact-motor span{color:var(--muted);font-size:9px;display:block;margin-bottom:2px}
+    .scheme-f .compact-motor b{font-size:12px;color:#f0e8dc;font-weight:700}
+    .scheme-f .work-tabs{display:flex;border-bottom:1px solid var(--line);background:#2a2520}
+    .scheme-f .work-tabs .tab{padding:6px 12px;font-size:10px;border-right:1px solid var(--line);color:var(--muted);cursor:pointer}
+    .scheme-f .work-tabs .tab.active{background:var(--panel);color:#e87a3a;font-weight:700;border-top:2px solid #e87a3a}
+    .scheme-f table th{height:26px;background:#332c25;text-align:left;color:var(--muted);font-weight:700;padding:0 9px;font-size:9px;border-bottom:1px solid var(--line);text-transform:uppercase;letter-spacing:.5px}
+    .scheme-f table td{height:24px;padding:0 9px;border-bottom:1px solid var(--line);font-size:10px}
+    .scheme-f table tbody tr:nth-child(odd) td{background:#251f1a}
+    .scheme-f table tbody tr.selected td{background:#3a2e1e}
+    .scheme-f table tbody tr.selected td:first-child{box-shadow:inset 3px 0 0 #e87a3a}
+    .scheme-f .right-side{grid-row:1/3;display:flex;flex-direction:column;overflow:hidden;gap:4px}
+    .scheme-f .mini-grid{padding:6px;display:grid;grid-template-columns:1fr 1fr;gap:4px}
+    .scheme-f .mini-metric{padding:7px 9px;background:#332c25;border:1px solid var(--line);border-radius:2px}
+    .scheme-f .mini-metric .l{font-size:9px;color:var(--muted);margin-bottom:2px}
+    .scheme-f .mini-metric .v{font-size:13px;color:#f0e8dc;font-weight:700}
+    .scheme-f .mini-metric .v.warn{color:#e8c03a}
+    .scheme-f .mini-metric .v.good{color:#7ab95a}
+    .scheme-f .dev-strip{padding:7px 10px;display:grid;grid-template-columns:1fr 1fr;gap:5px}
+    .scheme-f .dev-strip .item{display:flex;align-items:center;gap:5px;padding:5px 7px;background:#332c25;border-radius:2px;font-size:10px}
+    .scheme-f .dev-strip .item .name{color:#f0e8dc;font-weight:600}
+    .scheme-f .dev-strip .item .badge{margin-left:auto}
+    .scheme-f .curve-bottom{display:grid;grid-template-columns:1.4fr 1fr;gap:4px;min-height:0}
+    .scheme-f .curve-bottom .panel{height:100%}
+    .scheme-f .chart-area{position:relative;flex:1;min-height:0}
+    .scheme-f .chart-area canvas{position:absolute;inset:0;width:100%;height:100%}
+    .scheme-f .log-area{padding:7px 10px;overflow:auto;font-family:Consolas,monospace;font-size:9px;line-height:1.7}
+    .scheme-f .log-area .line{display:grid;grid-template-columns:60px 60px 1fr;gap:8px}
+    .scheme-f .log-area .line time{color:var(--muted)}
+    .scheme-f .log-area .line .tag{color:#e87a3a;font-weight:700}
+    .scheme-f .log-area .line .tag.ok{color:#7ab95a}
+    .scheme-f .log-area .line .tag.warn{color:#e8c03a}
+    .scheme-f footer{display:flex;align-items:center;padding:0 12px;background:linear-gradient(180deg,#2a2520,#1f1a17);border-top:1px solid #4a3e34;gap:14px;font-size:10px;color:var(--muted)}
+    .scheme-f footer .right{margin-left:auto}
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  <div class="scheme-label" id="schemeLabel"></div>
+  <nav class="scheme-switch" id="schemeSwitch"></nav>
+  <script id="appData"></script>
+  <script>
+    const schemes = [
+      {key:'a', name:'方案 A · 工业指挥中心 - 实时监控聚焦', theme:'深色 + 琥珀橙', desc:'大型实时KPI矩阵 + 多设备协同监控'},
+      {key:'b', name:'方案 B · 极简白板 - 流程引导聚焦', theme:'纯白 + 天空蓝', desc:'横向步骤引导 + 卡片化轻量布局'},
+      {key:'c', name:'方案 C · 赛博霓虹 - 数据可视化聚焦', theme:'深紫黑 + 霓虹青/品红', desc:'HUD科幻风 + 大型数据可视化'},
+      {key:'d', name:'方案 D · 实验室翡翠 - 分析计算聚焦', theme:'灰白 + 翡翠绿', desc:'学术严谨风 + 密集数据分析表'},
+      {key:'e', name:'方案 E · 玻璃态渐变 - 综合工作台', theme:'暗色 + 渐变蓝紫', desc:'玻璃态卡片 + 渐变背景 + 现代材质'},
+      {key:'f', name:'方案 F · 暖色高密度 - 设备通讯聚焦', theme:'暖灰 + 橙红', desc:'经典工业 + 多列密集工程界面'},
+    ];
+    const sw = document.getElementById('schemeSwitch');
+    schemes.forEach(s => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.textContent = s.key.toUpperCase();
+      b.title = s.name;
+      b.dataset.scheme = s.key;
+      b.addEventListener('click', () => {
+        const u = new URL(location.href);
+        u.searchParams.set('scheme', s.key);
+        location.href = u.href;
+      });
+      sw.appendChild(b);
+    });
+    const requested = (new URLSearchParams(location.search).get('scheme') || 'a').toLowerCase();
+    const key = schemes.find(s => s.key === requested) ? requested : 'a';
+    document.body.className = 'scheme-' + key;
+    document.querySelectorAll('.scheme-switch button').forEach(b => {
+      b.classList.toggle('active', b.dataset.scheme === key);
+    });
+    const cur = schemes.find(s => s.key === key);
+    document.getElementById('schemeLabel').textContent = cur.name + ' | ' + cur.theme;
+
+    // ====== Shared data ======
+    const project = {
+      id: '2025DJ-0825',
+      model: 'YE3-355M-4',
+      type: '工频三相异步电机',
+      power: '250 kW',
+      voltage: '380 V',
+      current: '462 A',
+      speed: '1485 rpm',
+      frequency: '50 Hz',
+      cosfi: '0.88',
+      connection: '△',
+      insulation: 'F',
+    };
+
+    const liveData = {
+      ua: '380.2', ub: '379.8', uc: '380.4',
+      ia: '15.18', ib: '14.92', ic: '15.32',
+      p: '7.46', cosfi: '0.81', freq: '50.02',
+      n: '1476', t: '48.3', eff: '94.2',
+      temp1: '68.2', temp2: '66.8', temp3: '52.4',
+    };
+
+    const sampleRows = [
+      ['01','380.2','15.18','7.46','0.81','1476','48.3','68.2','合格'],
+      ['02','361.0','14.72','6.92','0.79','1478','44.1','65.4','合格'],
+      ['03','342.3','14.11','6.38','0.76','1480','40.5','62.7','合格'],
+      ['04','323.1','13.42','5.82','0.73','1481','36.8','59.8','进行中'],
+      ['05','304.0','12.65','5.25','0.69','1483','33.0','57.2','待测'],
+      ['06','285.2','11.82','4.71','0.65','1484','29.4','54.5','待测'],
+      ['07','266.1','10.91','4.14','0.61','1486','25.7','51.9','待测'],
+      ['08','247.0','10.05','3.66','0.58','1487','22.4','49.3','待测'],
+    ];
+
+    const treeData = [
+      {label:'基础测量',items:[
+        {n:'直流电阻和绝缘电阻测量',s:'done'},
+        {n:'空载特性试验',s:'doing',active:true},
+        {n:'堵转特性试验',s:'todo'},
+        {n:'负载特性与效率分析',s:'todo'},
+      ]},
+      {label:'温升与机械',items:[
+        {n:'温升试验',s:'todo'},
+        {n:'TN试验',s:'todo'},
+        {n:'振动和噪声试验',s:'todo'},
+      ]},
+      {label:'其他试验',items:[
+        {n:'耐压 / 超速 / 轴电压',s:'todo'},
+        {n:'短路与过电流试验',s:'todo'},
+      ]},
+    ];
+
+    function treeHTML(cls, withCheck) {
+      return treeData.map(g => `
+        <div class="tree-group ${cls||''}">▾ ${g.label}</div>
+        ${g.items.map(it => `
+          <div class="tree-item ${cls||''} ${it.active?'active':''} ${it.s==='done'?'done':''}">
+            ${it.n}
+            ${withCheck ? `<span class="check ${it.s==='done'?'done':it.s==='doing'?'doing':''}">${it.s==='done'?'✓':it.s==='doing'?'●':''}</span>` : ''}
+          </div>`).join('')}
+      `).join('');
+    }
+
+    function tableHTML(cols, withRowNum=true) {
+      const headers = withRowNum ? ['#', ...cols] : cols;
+      return `<table><thead><tr>${headers.map(h => `<th>${h}</th>`).join('')}</tr></thead><tbody>${sampleRows.map((r,i) => `<tr class="${i===3?'selected-row':''}">${r.map((c,j) => `<td class="${j===0||j>0?'num':''}">${c}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
+    }
+
+    // ====== Scheme A: Industrial Command Center ======
+    function schemeA() {
+      const kpis = [
+        {l:'平均线电压', v:liveData.ua, u:'V', d:'稳定 ±0.4%', c:'good'},
+        {l:'平均电流', v:liveData.ia, u:'A', d:'量程正常', c:'good'},
+        {l:'有功功率', v:liveData.p, u:'kW', d:'三相合计', c:'warn'},
+        {l:'功率因数', v:liveData.cosfi, u:'', d:'正常', c:'good'},
+        {l:'转速', v:liveData.n, u:'rpm', d:'接近额定值', c:'warn'},
+        {l:'效率', v:liveData.eff, u:'%', d:'额定工况', c:'good'},
+        {l:'最高温度', v:liveData.temp1, u:'°C', d:'DE轴承', c:'good'},
+      ];
+      const devList = [
+        {n:'PLC 控制器', ip:'192.168.1.10', s:'good'},
+        {n:'WT1800E', ip:'192.168.1.21', s:'good'},
+        {n:'QZ8962A1', ip:'COM3 / 9600', s:'good'},
+        {n:'温度采集仪', ip:'192.168.1.30', s:'warn'},
+        {n:'扭矩转速仪', ip:'COM4 / 9600', s:'good'},
+        {n:'S7-300 PLC', ip:'192.168.1.40', s:'good'},
+      ];
+      return `
+        <div class="app">
+          <header>
+            <div class="brand">
+              <div class="brand-mark">M</div>
+              <div>电机试验监控中心<div class="muted" style="font-size:10px;font-weight:400">Motor Test Command Center</div></div>
+            </div>
+            <div class="head-title">
+              <strong>${project.id} · ${project.model}</strong>
+              <small>${project.type} · 采集模式 · 14:26:08</small>
+            </div>
+            <div class="head-strip">
+              <div class="item"><span class="dot good"></span><strong>采集运行中</strong></div>
+              <div class="item">采样 <strong>1s</strong></div>
+              <div class="item">项目 <strong>3/14</strong></div>
+              <div class="item"><strong>超级用户</strong></div>
+            </div>
+          </header>
+          <aside>
+            <div class="nav-section">当前工作</div>
+            <div class="nav-item active"><span class="nav-icon">▦</span>试验总览</div>
+            <div class="nav-item"><span class="nav-icon">⌁</span>实时数据<span class="nav-count">24</span></div>
+            <div class="nav-item"><span class="nav-icon">▥</span>试验项目</div>
+            <div class="nav-section">数据与输出</div>
+            <div class="nav-item"><span class="nav-icon">⌁</span>分析计算</div>
+            <div class="nav-item"><span class="nav-icon">▤</span>报表输出</div>
+            <div class="nav-item"><span class="nav-icon">◴</span>历史试验</div>
+            <div class="nav-section">管理</div>
+            <div class="nav-item"><span class="nav-icon">⚙</span>型号参数</div>
+            <div class="nav-item"><span class="nav-icon">⌘</span>通信设置</div>
+            <div class="nav-item"><span class="nav-icon">◉</span>用户管理</div>
+          </aside>
+          <main>
+            <div class="kpi-row">
+              ${kpis.map(k => `<div class="panel"><div class="metric ${k.c}"><div class="metric-label">${k.l}</div><div class="metric-value num">${k.v}<span class="metric-unit">${k.u}</span></div><div class="metric-delta ${k.c}">${k.d}</div></div></div>`).join('')}
+            </div>
+            <div class="middle">
+              <div class="panel">
+                <div class="panel-title">试验项目<small>3 / 14 完成</small></div>
+                <div class="test-list">${treeHTML('test-item', true)}</div>
+              </div>
+              <div class="panel">
+                <div class="panel-title">空载特性曲线 · 实时趋势<small>刷新 1s</small></div>
+                <div class="chart-wrap"><canvas id="chartA"></canvas>
+                  <div class="chart-legend"><span><i style="background:#f0a51a"></i>电流 I (A)</span><span><i style="background:#3ecf8e"></i>功率 P (kW)</span></div>
+                </div>
+              </div>
+              <div class="panel">
+                <div class="panel-title">设备状态<small>联机采集</small></div>
+                <div class="dev-grid">
+                  ${devList.map(d => `<div class="dev-card ${d.s}"><span class="dot ${d.s}"></span><div><div class="name">${d.n}</div><div class="meta" style="font-size:9px">${d.ip}</div></div></div>`).join('')}
+                </div>
+              </div>
+            </div>
+            <div class="bottom-row">
+              <div class="panel">
+                <div class="panel-title">采集数据表 · 空载特性试验<small>第 4 行待写入</small></div>
+                <div class="panel-body" style="overflow:auto">${tableHTML(['电压 U (V)','电流 I (A)','功率 P (kW)','功率因数','转速 (rpm)','转矩 (N·m)','温度 (°C)','状态'], false)}</div>
+              </div>
+              <div class="panel">
+                <div class="panel-title">事件与告警<small>最近 30 分钟</small></div>
+                <div class="alarm-list">
+                  <div class="alarm"><span class="dot good"></span><span>WT1800E 通信恢复</span><time>14:22:16</time></div>
+                  <div class="alarm"><span class="dot warn"></span><span>温度通道 17 无数据</span><time>14:19:03</time></div>
+                  <div class="alarm"><span class="dot good"></span><span>量程自动设置完成</span><time>14:17:48</time></div>
+                  <div class="alarm"><span class="dot good"></span><span>试验数据自动保存</span><time>14:16:02</time></div>
+                  <div class="alarm"><span class="dot bad"></span><span>QZ8962A1 通信超时</span><time>14:11:32</time></div>
+                  <div class="alarm"><span class="dot good"></span><span>PLC 程序加载完成</span><time>14:08:15</time></div>
+                </div>
+              </div>
+            </div>
+          </main>
+          <footer>
+            <div class="device good"><span class="dot"></span><strong>PLC</strong> 正常</div>
+            <div class="device good"><span class="dot"></span><strong>WT1800E</strong> 正常</div>
+            <div class="device good"><span class="dot"></span><strong>QZ8962A1</strong> 正常</div>
+            <div class="device warn"><span class="dot"></span><strong>温度</strong> 23/24</div>
+            <div class="right">
+              <span class="muted">采样周期 1s</span>
+              <span class="muted">数据库写入正常</span>
+              <span class="muted">2026-07-23 14:26:08</span>
+            </div>
+          </footer>
+        </div>
+      `;
+    }
+
+    // ====== Scheme B: Minimalist Whiteboard ======
+    function schemeB() {
+      const kpis = [
+        {l:'平均线电压', v:liveData.ua, u:'V', d:'稳定 ±0.4%', c:'good'},
+        {l:'平均电流', v:liveData.ia, u:'A', d:'量程正常', c:'good'},
+        {l:'有功功率', v:liveData.p, u:'kW', d:'三相合计', c:''},
+        {l:'转速', v:liveData.n, u:'rpm', d:'接近额定值', c:'warn'},
+        {l:'最高温度', v:liveData.temp1, u:'°C', d:'DE轴承', c:'good'},
+      ];
+      return `
+        <div class="app">
+          <header>
+            <div class="brand">
+              <div class="brand-mark">M</div>
+              <div>电机试验分析系统</div>
+            </div>
+            <div class="head-nav">
+              <span class="active">试验工作台</span>
+              <span>历史记录</span>
+              <span>报表中心</span>
+              <span>型号管理</span>
+              <span>系统设置</span>
+            </div>
+            <div class="head-right">
+              <span class="badge good"><span class="dot"></span>4 台设备在线</span>
+              <button class="icon-btn">超级用户 ▾</button>
+            </div>
+          </header>
+          <div class="stepper">
+            <div class="step done"><i>✓</i>选择或新建试验</div>
+            <div class="step done"><i>✓</i>确认电机参数</div>
+            <div class="step done"><i>✓</i>连接采集设备</div>
+            <div class="step current"><i>4</i>执行试验项目</div>
+            <div class="step"><i>5</i>分析与复核</div>
+            <div class="step"><i>6</i>生成试验报表</div>
+          </div>
+          <main>
+            <section class="left-col">
+              <div class="panel motor-card">
+                <div class="label">当前被试电机</div>
+                <div class="name">${project.model}</div>
+                <div class="id">报告编号 ${project.id} · ${project.type}</div>
+                <div class="params">
+                  <div class="item"><span>额定电压</span><b class="num">${project.voltage}</b></div>
+                  <div class="item"><span>额定电流</span><b class="num">${project.current}</b></div>
+                  <div class="item"><span>额定功率</span><b class="num">${project.power}</b></div>
+                  <div class="item"><span>额定转速</span><b class="num">${project.speed}</b></div>
+                </div>
+              </div>
+              <div class="panel">
+                <div class="panel-title">项目清单<small>3 / 14 完成</small></div>
+                <div class="panel-body" style="overflow:auto;padding:6px 0">${treeHTML('tree-item', true)}</div>
+              </div>
+            </section>
+            <section class="middle-col">
+              <div class="title-row">
+                <h1>空载特性试验</h1>
+                <span class="sub">记录电压、电流、功率与转速，完成曲线分析</span>
+                <div class="actions">
+                  <button class="action">调用历史</button>
+                  <button class="action primary">读取当前数据</button>
+                </div>
+              </div>
+              <div class="panel kpi-row">
+                ${kpis.map(k => `<div class="metric ${k.c}"><div class="metric-label">${k.l}</div><div class="metric-value num">${k.v}<span class="metric-unit">${k.u}</span></div><div class="metric-delta ${k.c}">${k.d}</div></div>`).join('')}
+              </div>
+              <div class="panel data-panel">
+                <div class="panel-title">测量数据<small>已记录 4 / 8 个工况点</small></div>
+                <div class="panel-body" style="overflow:auto">${tableHTML(['电压 U (V)','电流 I (A)','功率 P (kW)','功率因数','转速 (rpm)','转矩 (N·m)','温度 (°C)','状态'], false)}</div>
+              </div>
+              <div class="bottom-split">
+                <div class="panel">
+                  <div class="panel-title">数据趋势与拟合曲线<small>实时</small></div>
+                  <div class="chart-wrap" style="position:relative;flex:1;min-height:0"><canvas id="chartB"></canvas></div>
+                </div>
+                <div class="panel">
+                  <div class="panel-title">分析结果<small>自动计算</small></div>
+                  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:18px">
+                    <div><div class="muted" style="font-size:10px">空载电流</div><b class="num" style="font-size:20px">13.8 A</b></div>
+                    <div><div class="muted" style="font-size:10px">空载损耗</div><b class="num" style="font-size:20px">1.24 kW</b></div>
+                    <div><div class="muted" style="font-size:10px">拟合优度 R²</div><b class="num" style="font-size:20px">0.998</b></div>
+                    <div><div class="muted" style="font-size:10px">结果判定</div><b class="good" style="font-size:16px">符合要求</b></div>
+                  </div>
+                </div>
+              </div>
+            </section>
+            <section class="right-col">
+              <div class="panel">
+                <div class="panel-title">采集设备<small>联机模式</small></div>
+                <div class="dev-list">
+                  <div class="dev-item"><span class="dot good"></span><div><div class="name">PLC 控制器</div><div class="meta">192.168.1.10</div></div><span class="badge good">在线</span></div>
+                  <div class="dev-item"><span class="dot good"></span><div><div class="name">WT1800E 功率分析仪</div><div class="meta">192.168.1.21</div></div><span class="badge good">在线</span></div>
+                  <div class="dev-item"><span class="dot good"></span><div><div class="name">QZ8962A1 分析仪</div><div class="meta">COM3 · 9600</div></div><span class="badge good">在线</span></div>
+                  <div class="dev-item"><span class="dot warn"></span><div><div class="name">24 路温度采集</div><div class="meta">192.168.1.30</div></div><span class="badge warn">23 路</span></div>
+                  <div class="dev-item"><span class="dot good"></span><div><div class="name">扭矩转速仪 XJP</div><div class="meta">COM4 · 9600</div></div><span class="badge good">在线</span></div>
+                </div>
+              </div>
+              <div class="panel">
+                <div class="panel-title">报表准备<small>自动汇总</small></div>
+                <div class="report-list">
+                  <div class="report-item"><div class="icon">▤</div><div><div class="name">型式试验报表</div><div class="meta">已完成 3 / 14 项</div></div><button class="action">预览</button></div>
+                  <div class="report-item"><div class="icon">▤</div><div><div class="name">出厂试验报表</div><div class="meta">等待项目完成</div></div><button class="action">配置</button></div>
+                  <div class="report-item"><div class="icon">▤</div><div><div class="name">Excel 数据明细</div><div class="meta">可随时导出</div></div><button class="action">导出</button></div>
+                </div>
+              </div>
+              <div class="tip"><b>操作提示</b><br>当前选中第 4 行。确认电力系统已调节至对应工况后，点击"读取当前数据"。</div>
+            </section>
+          </main>
+          <footer>
+            <span>采样周期 1s</span>
+            <span>数据库写入正常</span>
+            <span>试验数据库.mdb · 4 条记录</span>
+            <div class="right">
+              <span class="muted">超级用户</span>
+              <span class="muted">2026-07-23 14:26:08</span>
+            </div>
+          </footer>
+        </div>
+      `;
+    }
+
+    // ====== Scheme C: Cyberpunk Neon ======
+    function schemeC() {
+      const kpis = [
+        {l:'VOLTAGE', v:liveData.ua, u:'V', c:'good'},
+        {l:'CURRENT', v:liveData.ia, u:'A', c:'good'},
+        {l:'POWER', v:liveData.p, u:'kW', c:'warn'},
+        {l:'FREQUENCY', v:liveData.freq, u:'Hz', c:'good'},
+        {l:'SPEED', v:liveData.n, u:'rpm', c:'warn'},
+        {l:'TEMP', v:liveData.temp1, u:'°C', c:'good'},
+      ];
+      return `
+        <div class="app">
+          <header>
+            <div class="brand">
+              <div class="brand-mark">M</div>
+              <div class="brand-text">MOTOR.SYS<small>v4.6 · CYBER EDITION</small></div>
+            </div>
+            <div class="head-stats">
+              <div class="stat"><span class="v">${project.id}</span><span class="l">PROJECT_ID</span></div>
+              <div class="stat"><span class="v">${project.model}</span><span class="l">MODEL</span></div>
+              <div class="stat"><span class="v">14:26:08</span><span class="l">TIMESTAMP</span></div>
+              <div class="stat"><span class="v">94.2%</span><span class="l">EFFICIENCY</span></div>
+            </div>
+          </header>
+          <aside>
+            <div class="nav-item active"><span class="icon">◉</span><span>MONITOR</span></div>
+            <div class="nav-item"><span class="icon">⌁</span><span>LIVE</span></div>
+            <div class="nav-item"><span class="icon">▥</span><span>TEST</span></div>
+            <div class="nav-item"><span class="icon">◫</span><span>DATA</span></div>
+            <div class="nav-item"><span class="icon">▤</span><span>REPORT</span></div>
+            <div class="nav-item"><span class="icon">⚙</span><span>CONFIG</span></div>
+          </aside>
+          <main>
+            <div class="kpi-row">
+              ${kpis.map(k => `<div class="panel"><div class="metric ${k.c}"><div class="metric-label">${k.l}</div><div class="metric-value num">${k.v}<span class="metric-unit">${k.u}</span></div><div class="metric-delta muted">REAL-TIME</div></div></div>`).join('')}
+            </div>
+            <div class="middle">
+              <div class="panel">
+                <div class="panel-title">NO-LOAD CURVE<small>实时趋势</small></div>
+                <div class="chart-wrap"><div class="grid-bg"></div><canvas id="chartC1"></canvas></div>
+              </div>
+              <div class="panel">
+                <div class="panel-title">EFFICIENCY MATRIX<small>多工况对比</small></div>
+                <div class="chart-wrap"><div class="grid-bg"></div><canvas id="chartC2"></canvas></div>
+              </div>
+              <div class="right-stack">
+                <div class="panel">
+                  <div class="panel-title">EFFICIENCY<small>实时</small></div>
+                  <div class="radar"><div class="ring"></div></div>
+                  <div class="ring-label">η = 94.2%</div>
+                </div>
+                <div class="panel">
+                  <div class="panel-title">STREAM EVENTS<small>最近</small></div>
+                  <div class="events">
+                    <div class="event ok"><span class="dot good"></span><span>[SAVE] DATA_POINT_04</span><time>14:26:08</time></div>
+                    <div class="event ok"><span class="dot good"></span><span>[READ] WT1800E.OK</span><time>14:25:41</time></div>
+                    <div class="event warn"><span class="dot warn"></span><span>[WARN] CH_17.NULL</span><time>14:24:19</time></div>
+                    <div class="event ok"><span class="dot good"></span><span>[COMM] QZ.LINK</span><time>14:22:16</time></div>
+                    <div class="event bad"><span class="dot bad"></span><span>[ALRM] QZ.TIMEOUT</span><time>14:11:32</time></div>
+                  </div>
+                </div>
+                <div class="panel">
+                  <div class="panel-title">QUICK ACTIONS</div>
+                  <div style="padding:10px;display:grid;gap:7px">
+                    <button class="action primary" style="background:linear-gradient(135deg,#00e5ff,#7c5cff);border-color:transparent;color:#07060f;font-weight:700">▶ 读取数据</button>
+                    <button class="action ghost" style="background:transparent;border-color:rgba(0,229,255,.4);color:#00e5ff">■ 停止采集</button>
+                    <button class="action ghost" style="background:transparent;border-color:rgba(0,229,255,.4);color:#00e5ff">↻ 重连设备</button>
+                    <button class="action ghost" style="background:transparent;border-color:rgba(255,46,126,.4);color:#ff2e7e">⚡ 紧急停机</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="bottom-row">
+              <div class="panel">
+                <div class="panel-title">CAPTURE.LOG<small>第 4 行待写入</small></div>
+                <div class="panel-body" style="overflow:auto">${tableHTML(['电压 U (V)','电流 I (A)','功率 P (kW)','功率因数','转速 (rpm)','转矩 (N·m)','温度 (°C)','状态'], false)}</div>
+              </div>
+              <div class="panel">
+                <div class="panel-title">DEVICE.STATUS<small>联机监控</small></div>
+                <div style="padding:10px 14px;display:grid;grid-template-columns:1fr 1fr;gap:8px">
+                  <div class="dev-card" style="padding:9px 11px;background:rgba(0,229,255,.05);border:1px solid rgba(0,229,255,.3);border-radius:4px;display:flex;align-items:center;gap:8px;font-size:11px"><span class="dot good"></span><div><div style="font-weight:600">PLC</div><div class="muted" style="font-size:9px">192.168.1.10</div></div></div>
+                  <div class="dev-card" style="padding:9px 11px;background:rgba(0,229,255,.05);border:1px solid rgba(0,229,255,.3);border-radius:4px;display:flex;align-items:center;gap:8px;font-size:11px"><span class="dot good"></span><div><div style="font-weight:600">WT1800E</div><div class="muted" style="font-size:9px">192.168.1.21</div></div></div>
+                  <div class="dev-card" style="padding:9px 11px;background:rgba(0,229,255,.05);border:1px solid rgba(0,229,255,.3);border-radius:4px;display:flex;align-items:center;gap:8px;font-size:11px"><span class="dot good"></span><div><div style="font-weight:600">QZ8962A1</div><div class="muted" style="font-size:9px">COM3 · 9600</div></div></div>
+                  <div class="dev-card" style="padding:9px 11px;background:rgba(255,182,39,.08);border:1px solid rgba(255,182,39,.4);border-radius:4px;display:flex;align-items:center;gap:8px;font-size:11px"><span class="dot warn"></span><div><div style="font-weight:600">TEMP.MW100</div><div class="muted" style="font-size:9px">23/24 CH</div></div></div>
+                </div>
+              </div>
+            </div>
+          </main>
+          <footer>
+            <span class="good">● SYS.NOMINAL</span>
+            <span class="good">● DATA.STREAM</span>
+            <span class="warn">● TEMP.PARTIAL</span>
+            <span class="muted">UPTIME 04:26:18</span>
+            <div class="right">
+              <span class="muted">DB: TEST_DB.MDB</span>
+              <span class="muted">2026.07.23 / 14:26:08</span>
+            </div>
+          </footer>
+        </div>
+      `;
+    }
+
+    // ====== Scheme D: Academic Lab Emerald ======
+    function schemeD() {
+      return `
+        <div class="app">
+          <header>
+            <div class="brand">
+              <div class="brand-mark">M</div>
+              <div>电机试验分析系统 · 实验室版</div>
+            </div>
+            <div class="menu">
+              <span>系统管理</span>
+              <span>试验操作</span>
+              <span class="active">试验工作台</span>
+              <span>相关设置</span>
+              <span>报表输出</span>
+            </div>
+            <div class="head-right">
+              <span class="item"><span class="dot good"></span>联机</span>
+              <span class="item">项目: <strong>${project.id}</strong></span>
+              <span class="item">超级用户</span>
+            </div>
+          </header>
+          <main>
+            <section class="panel nav-left">
+              <div class="tabs">
+                <span class="tab active">试验项目</span>
+                <span class="tab">实时数据</span>
+                <span class="tab">相关设置</span>
+              </div>
+              <div class="panel-title" style="height:30px">项目导航<small>工频 / 变频</small></div>
+              <div class="tree-body">${treeHTML('tree-item', true)}</div>
+            </section>
+            <section class="work-area">
+              <div class="panel work-top">
+                <div class="panel-title">直流电阻和绝缘电阻测量<small>试验编号 ${project.id}</small></div>
+                <div class="compact-motor">
+                  <div><span>型号</span><b>${project.model}</b></div>
+                  <div><span>额定电压</span><b class="num">${project.voltage}</b></div>
+                  <div><span>额定电流</span><b class="num">${project.current}</b></div>
+                  <div><span>额定功率</span><b class="num">${project.power}</b></div>
+                  <div><span>额定转速</span><b class="num">${project.speed}</b></div>
+                  <div><span>功率因数</span><b class="num">${project.cosfi}</b></div>
+                  <div><span>接法/绝缘</span><b>${project.connection} / ${project.insulation}</b></div>
+                </div>
+                <div class="work-tabs">
+                  <span class="tab active">测量数据</span>
+                  <span class="tab">特性曲线</span>
+                  <span class="tab">分析结果</span>
+                  <span class="tab">试验说明</span>
+                </div>
+                <div style="flex:1;min-height:0;overflow:auto;padding:6px 0">${tableHTML(['电压 U (V)','电流 I (A)','功率 P (kW)','功率因数','转速 (rpm)','转矩 (N·m)','温度 (°C)','状态'], false)}</div>
+              </div>
+              <div class="curve-bottom">
+                <div class="panel">
+                  <div class="panel-title">空载特性曲线与损耗拟合<small>高阶步进拟合</small></div>
+                  <div class="chart-area"><canvas id="chartD"></canvas></div>
+                </div>
+                <div class="panel">
+                  <div class="panel-title">操作记录与系统消息<small>最近事件</small></div>
+                  <div class="log-area">
+                    <div class="line"><time>14:26:08</time><span class="tag">SAVE</span><span>第 4 个工况点已写入数据库</span></div>
+                    <div class="line"><time>14:25:41</time><span class="tag">READ</span><span>WT1800E 数据读取完成，校验通过</span></div>
+                    <div class="line"><time>14:24:19</time><span class="tag warn">WARN</span><span>温度通道 17 未配置被试设备</span></div>
+                    <div class="line"><time>14:22:16</time><span class="tag">COMM</span><span>QZ8962A1 通信连接正常</span></div>
+                    <div class="line"><time>14:11:32</time><span class="tag bad">ALRM</span><span>QZ8962A1 通信超时，自动重连成功</span></div>
+                    <div class="line"><time>14:08:15</time><span class="tag">INIT</span><span>PLC 程序加载完成</span></div>
+                    <div class="line"><time>14:05:02</time><span class="tag">START</span><span>空载特性试验开始</span></div>
+                  </div>
+                </div>
+              </div>
+            </section>
+            <section class="right-side">
+              <div class="panel" style="flex:1">
+                <div class="panel-title">特性计算分析<small>A法 / B法 / C法 / E法</small></div>
+                <div class="analysis">
+                  <div class="group">
+                    <div class="gtitle">空载试验结果</div>
+                    <div class="row"><span class="l">空载电流 I₀</span><span class="v num">13.8 A</span></div>
+                    <div class="row"><span class="l">空载功率 P₀</span><span class="v num">1.24 kW</span></div>
+                    <div class="row"><span class="l">机械损耗 P_mec</span><span class="v num">0.85 kW</span></div>
+                    <div class="row"><span class="l">额定铁耗 P_Fe</span><span class="v num">0.39 kW</span></div>
+                  </div>
+                  <div class="group">
+                    <div class="gtitle">效率特性</div>
+                    <div class="row important"><span class="l">额定效率 η_N</span><span class="v num">94.2 %</span></div>
+                    <div class="row"><span class="l">最大转矩倍数</span><span class="v num">2.85</span></div>
+                    <div class="row"><span class="l">起动转矩比</span><span class="v num">1.92</span></div>
+                    <div class="row"><span class="l">起动电流比</span><span class="v num">6.8</span></div>
+                  </div>
+                  <div class="group">
+                    <div class="gtitle">电阻参数</div>
+                    <div class="row"><span class="l">定子电阻 R₁</span><span class="v num">0.0245 Ω</span></div>
+                    <div class="row"><span class="l">转子电阻 R₂</span><span class="v num">0.0187 Ω</span></div>
+                    <div class="row"><span class="l">参考温度</span><span class="v num">75 °C</span></div>
+                  </div>
+                </div>
+              </div>
+              <div class="panel" style="height:120px">
+                <div class="panel-title">实时测量<small>WT1800E</small></div>
+                <div style="display:grid;grid-template-columns:1fr 1fr 1fr;padding:8px;gap:5px">
+                  <div style="padding:5px 8px;background:#eef1ed;border-radius:2px"><div style="font-size:9px;color:#5d6d68">Ua</div><b class="num" style="font-size:12px">${liveData.ua}V</b></div>
+                  <div style="padding:5px 8px;background:#eef1ed;border-radius:2px"><div style="font-size:9px;color:#5d6d68">Ia</div><b class="num" style="font-size:12px">${liveData.ia}A</b></div>
+                  <div style="padding:5px 8px;background:#eef1ed;border-radius:2px"><div style="font-size:9px;color:#5d6d68">P</div><b class="num" style="font-size:12px">${liveData.p}kW</b></div>
+                  <div style="padding:5px 8px;background:#eef1ed;border-radius:2px"><div style="font-size:9px;color:#5d6d68">cosφ</div><b class="num" style="font-size:12px">${liveData.cosfi}</b></div>
+                  <div style="padding:5px 8px;background:#eef1ed;border-radius:2px"><div style="font-size:9px;color:#5d6d68">n</div><b class="num" style="font-size:12px">${liveData.n}rpm</b></div>
+                  <div style="padding:5px 8px;background:#eef1ed;border-radius:2px"><div style="font-size:9px;color:#5d6d68">T</div><b class="num" style="font-size:12px">${liveData.t}Nm</b></div>
+                </div>
+              </div>
+            </section>
+          </main>
+          <footer>
+            <span class="good">● PLC 正常</span>
+            <span class="good">● WT1800E 正常</span>
+            <span class="good">● QZ8962A1 正常</span>
+            <span class="warn">● 温度采集 23/24</span>
+            <div class="right">数据库: 试验数据库.mdb · 记录 4 · 2026-07-23 14:26:08</div>
+          </footer>
+        </div>
+      `;
+    }
+
+    // ====== Scheme E: Glassmorphism Gradient ======
+    function schemeE() {
+      const kpis = [
+        {l:'平均电压', v:liveData.ua, u:'V', c:'good'},
+        {l:'平均电流', v:liveData.ia, u:'A', c:'good'},
+        {l:'有功功率', v:liveData.p, u:'kW', c:''},
+        {l:'效率', v:liveData.eff, u:'%', c:'good'},
+        {l:'最高温度', v:liveData.temp1, u:'°C', c:'warn'},
+      ];
+      return `
+        <div class="app">
+          <header>
+            <div class="brand">
+              <div class="brand-mark">M</div>
+              <div>电机试验分析系统</div>
+            </div>
+            <div class="head-nav">
+              <span class="active">工作台</span>
+              <span>历史数据</span>
+              <span>报表中心</span>
+              <span>智能分析</span>
+              <span>系统设置</span>
+            </div>
+            <div class="head-right">
+              <span class="badge" style="background:rgba(61,220,151,.15);color:#3ddc97"><span class="dot"></span>5 设备在线</span>
+              <button class="icon-btn">超级用户 ▾</button>
+              <button class="icon-btn primary">+ 新建试验</button>
+            </div>
+          </header>
+          <main>
+            <div class="kpi-row">
+              ${kpis.map(k => `<div class="panel"><div class="metric ${k.c}"><div class="metric-label">${k.l}</div><div class="metric-value num">${k.v}<span class="metric-unit">${k.u}</span></div><div class="metric-delta muted">实时</div></div></div>`).join('')}
+            </div>
+            <div class="work-grid">
+              <div class="left-stack">
+                <div class="panel">
+                  <div class="panel-title">试验项目<small>3 / 14 完成</small></div>
+                  <div class="test-tree">${treeHTML('item', true)}</div>
+                </div>
+                <div class="panel">
+                  <div class="panel-title">电机参数<small>${project.model}</small></div>
+                  <div style="padding:18px">
+                    <div style="font-size:11px;color:var(--muted)">报告编号</div>
+                    <div style="font-size:18px;font-weight:700;margin-bottom:14px" class="num">${project.id}</div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+                      <div><div style="font-size:10px;color:var(--muted)">额定功率</div><b class="num" style="font-size:14px">${project.power}</b></div>
+                      <div><div style="font-size:10px;color:var(--muted)">额定电压</div><b class="num" style="font-size:14px">${project.voltage}</b></div>
+                      <div><div style="font-size:10px;color:var(--muted)">额定电流</div><b class="num" style="font-size:14px">${project.current}</b></div>
+                      <div><div style="font-size:10px;color:var(--muted)">额定转速</div><b class="num" style="font-size:14px">${project.speed}</b></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="panel">
+                <div class="panel-title">空载特性曲线<small>实时拟合</small></div>
+                <div class="chart-wrap"><canvas id="chartE"></canvas></div>
+              </div>
+              <div class="right-stack">
+                <div class="panel">
+                  <div class="panel-title">采集设备<small>联机</small></div>
+                  <div style="overflow:auto">
+                    <div class="dev-card"><div class="icon">⚙</div><div class="info"><div class="name">PLC 控制器</div><div class="meta">192.168.1.10</div></div><span class="badge" style="background:rgba(61,220,151,.15);color:#3ddc97"><span class="dot"></span>在线</span></div>
+                    <div class="dev-card"><div class="icon">◉</div><div class="info"><div class="name">WT1800E 功率计</div><div class="meta">192.168.1.21</div></div><span class="badge" style="background:rgba(61,220,151,.15);color:#3ddc97"><span class="dot"></span>在线</span></div>
+                    <div class="dev-card"><div class="icon">◈</div><div class="info"><div class="name">QZ8962A1</div><div class="meta">COM3 · 9600</div></div><span class="badge" style="background:rgba(61,220,151,.15);color:#3ddc97"><span class="dot"></span>在线</span></div>
+                    <div class="dev-card"><div class="icon">◫</div><div class="info"><div class="name">温度采集 MW100</div><div class="meta">192.168.1.30</div></div><span class="badge" style="background:rgba(255,181,71,.15);color:#ffb547"><span class="dot"></span>23/24</span></div>
+                    <div class="dev-card"><div class="icon">▥</div><div class="info"><div class="name">扭矩转速仪</div><div class="meta">COM4 · 9600</div></div><span class="badge" style="background:rgba(61,220,151,.15);color:#3ddc97"><span class="dot"></span>在线</span></div>
+                  </div>
+                </div>
+                <div class="panel">
+                  <div class="panel-title">快速操作</div>
+                  <div class="action-grid">
+                    <button class="action primary">▶ 读取数据</button>
+                    <button class="action">■ 停止</button>
+                    <button class="action">↻ 重连</button>
+                    <button class="action">↧ 导出</button>
+                    <button class="action">▤ 报表</button>
+                    <button class="action">⏷ 分析</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </main>
+          <footer>
+            <span class="good">● 系统正常</span>
+            <span>采样周期 1s</span>
+            <span>数据库写入正常</span>
+            <div class="right">
+              <span>试验数据库.mdb · 4 条记录</span>
+              <span>2026-07-23 14:26:08</span>
+            </div>
+          </footer>
+        </div>
+      `;
+    }
+
+    // ====== Scheme F: Warm Engineering ======
+    function schemeF() {
+      return `
+        <div class="app">
+          <header>
+            <div class="brand">
+              <div class="brand-mark">M</div>
+              <div>三相异步电机试验软件</div>
+            </div>
+            <div class="menu">
+              <span>系统管理</span>
+              <span>试验操作</span>
+              <span class="active">试验工作台</span>
+              <span>相关设置</span>
+              <span>报表输出</span>
+            </div>
+            <div class="head-right">
+              <span class="badge"><span class="dot"></span>联机</span>
+              <span>项目: <strong>${project.id}</strong></span>
+              <span>超级用户</span>
+            </div>
+          </header>
+          <div class="toolbar">
+            <button class="action primary">▶ 读取数据</button>
+            <button class="action">■ 停止</button>
+            <div class="toolbar-sep"></div>
+            <button class="action">保存</button>
+            <button class="action">调用</button>
+            <button class="action">删除粗差</button>
+            <div class="toolbar-sep"></div>
+            <button class="action">数据分析</button>
+            <button class="action">打印预览</button>
+            <button class="action">Excel 输出</button>
+            <div class="toolbar-sep"></div>
+            <button class="action">统计分析</button>
+            <button class="action">拟合曲线</button>
+            <div class="label">采样周期 1s · 自动保存已开启 · 数据已写入数据库 4 条</div>
+          </div>
+          <main>
+            <section class="panel navigator">
+              <div class="tabs">
+                <span class="tab active">试验项目</span>
+                <span class="tab">实时数据</span>
+                <span class="tab">相关设置</span>
+                <span class="tab">报表输出</span>
+              </div>
+              <div class="panel-title">项目导航<small>工频 / 变频</small></div>
+              <div class="body">${treeHTML('item', true)}</div>
+            </section>
+            <section class="work-area">
+              <div class="panel work-top">
+                <div class="panel-title">直流电阻和绝缘电阻测量<small>试验编号 ${project.id} · 空载特性试验</small></div>
+                <div class="compact-motor">
+                  <div><span>型号</span><b>${project.model}</b></div>
+                  <div><span>额定电压</span><b class="num">${project.voltage}</b></div>
+                  <div><span>额定电流</span><b class="num">${project.current}</b></div>
+                  <div><span>额定功率</span><b class="num">${project.power}</b></div>
+                  <div><span>额定转速</span><b class="num">${project.speed}</b></div>
+                  <div><span>接法/绝缘</span><b>${project.connection} / ${project.insulation}</b></div>
+                </div>
+                <div class="work-tabs">
+                  <span class="tab active">测量数据</span>
+                  <span class="tab">特性曲线</span>
+                  <span class="tab">分析结果</span>
+                  <span class="tab">试验说明</span>
+                  <span class="tab">拟合参数</span>
+                </div>
+                <div style="flex:1;min-height:0;overflow:auto">${tableHTML(['电压 U (V)','电流 I (A)','功率 P (kW)','功率因数','转速 (rpm)','转矩 (N·m)','温度 (°C)','状态'], false)}</div>
+              </div>
+              <div class="curve-bottom">
+                <div class="panel">
+                  <div class="panel-title">空载特性曲线与损耗拟合<small>实时趋势</small></div>
+                  <div class="chart-area"><canvas id="chartF"></canvas></div>
+                </div>
+                <div class="panel">
+                  <div class="panel-title">操作记录<small>系统消息</small></div>
+                  <div class="log-area">
+                    <div class="line"><time>14:26:08</time><span class="tag ok">SAVE</span><span>第 4 个工况点已写入数据库</span></div>
+                    <div class="line"><time>14:25:41</time><span class="tag ok">READ</span><span>WT1800E 数据读取完成，校验通过</span></div>
+                    <div class="line"><time>14:24:19</time><span class="tag warn">WARN</span><span>温度通道 17 未配置被试设备</span></div>
+                    <div class="line"><time>14:22:16</time><span class="tag ok">COMM</span><span>QZ8962A1 通信连接正常</span></div>
+                    <div class="line"><time>14:11:32</time><span class="tag warn">ALRM</span><span>QZ8962A1 通信超时</span></div>
+                    <div class="line"><time>14:08:15</time><span class="tag">INIT</span><span>PLC 程序加载完成</span></div>
+                  </div>
+                </div>
+              </div>
+            </section>
+            <section class="right-side">
+              <div class="panel" style="flex:1">
+                <div class="panel-title">实时测量值<small>WT1800E</small></div>
+                <div class="mini-grid">
+                  <div class="mini-metric"><div class="l">线电压 U1</div><b class="num v">${liveData.ua}V</b></div>
+                  <div class="mini-metric"><div class="l">线电压 U2</div><b class="num v">${liveData.ub}V</b></div>
+                  <div class="mini-metric"><div class="l">线电压 U3</div><b class="num v">${liveData.uc}V</b></div>
+                  <div class="mini-metric"><div class="l">平均电流</div><b class="num v">${liveData.ia}A</b></div>
+                  <div class="mini-metric"><div class="l">有功功率</div><b class="num v warn">${liveData.p}kW</b></div>
+                  <div class="mini-metric"><div class="l">功率因数</div><b class="num v">${liveData.cosfi}</b></div>
+                  <div class="mini-metric"><div class="l">转速</div><b class="num v warn">${liveData.n}rpm</b></div>
+                  <div class="mini-metric"><div class="l">转矩</div><b class="num v">${liveData.t}Nm</b></div>
+                  <div class="mini-metric"><div class="l">DE 轴承</div><b class="num v good">${liveData.temp1}°C</b></div>
+                  <div class="mini-metric"><div class="l">NDE 轴承</div><b class="num v good">${liveData.temp2}°C</b></div>
+                </div>
+                <div class="panel-title" style="border-top:1px solid var(--line)">通信状态<small>实时</small></div>
+                <div class="dev-strip">
+                  <div class="item"><span class="dot good"></span><div><div class="name">PLC</div><div style="color:var(--muted);font-size:9px">192.168.1.10</div></div><span class="badge good" style="font-size:9px">在线</span></div>
+                  <div class="item"><span class="dot good"></span><div><div class="name">WT1800E</div><div style="color:var(--muted);font-size:9px">192.168.1.21</div></div><span class="badge good" style="font-size:9px">在线</span></div>
+                  <div class="item"><span class="dot good"></span><div><div class="name">QZ8962A1</div><div style="color:var(--muted);font-size:9px">COM3</div></div><span class="badge good" style="font-size:9px">在线</span></div>
+                  <div class="item"><span class="dot warn"></span><div><div class="name">温度采集</div><div style="color:var(--muted);font-size:9px">23/24</div></div><span class="badge warn" style="font-size:9px">部分</span></div>
+                </div>
+              </div>
+              <div class="panel" style="height:90px">
+                <div class="panel-title">关键计算结果<small>实时</small></div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;padding:6px;gap:4px;font-size:10px">
+                  <div><div style="color:var(--muted);font-size:9px">空载电流 I₀</div><b class="num" style="color:#e87a3a;font-size:13px">13.8 A</b></div>
+                  <div><div style="color:var(--muted);font-size:9px">空载损耗 P₀</div><b class="num" style="color:#e87a3a;font-size:13px">1.24 kW</b></div>
+                  <div><div style="color:var(--muted);font-size:9px">拟合优度 R²</div><b class="num" style="color:#7ab95a;font-size:13px">0.998</b></div>
+                  <div><div style="color:var(--muted);font-size:9px">结果判定</div><b style="color:#7ab95a;font-size:12px">符合要求</b></div>
+                </div>
+              </div>
+            </section>
+          </main>
+          <footer>
+            <span class="good">● PLC 正常</span>
+            <span class="good">● WT1800E 正常</span>
+            <span class="good">● QZ8962A1 正常</span>
+            <span class="warn">● 温度采集 23/24</span>
+            <div class="right">数据库: 试验数据库.mdb · 记录 4 · 2026-07-23 14:26:08</div>
+          </footer>
+        </div>
+      `;
+    }
+
+    // ====== Render ======
+    const render = {a:schemeA, b:schemeB, c:schemeC, d:schemeD, e:schemeE, f:schemeF}[key];
+    document.getElementById('root').innerHTML = render();
+
+    // ====== Charts ======
+    function drawLineChart(id, color1, color2, dark) {
+      const c = document.getElementById(id);
+      if (!c) return;
+      const dpr = devicePixelRatio || 1;
+      const r = c.getBoundingClientRect();
+      c.width = r.width * dpr;
+      c.height = r.height * dpr;
+      const x = c.getContext('2d');
+      x.scale(dpr, dpr);
+      const w = r.width, h = r.height;
+      const p = {l:42, r:18, t:14, b:24};
+      x.strokeStyle = dark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.07)';
+      x.lineWidth = 1;
+      for (let i = 0; i <= 5; i++) {
+        const y = p.t + (h - p.t - p.b) * i / 5;
+        x.beginPath(); x.moveTo(p.l, y); x.lineTo(w - p.r, y); x.stroke();
+      }
+      for (let i = 0; i <= 8; i++) {
+        const xx = p.l + (w - p.l - p.r) * i / 8;
+        x.beginPath(); x.moveTo(xx, p.t); x.lineTo(xx, h - p.b); x.stroke();
+      }
+      const series = (vals, color, fill) => {
+        x.strokeStyle = color; x.lineWidth = 2.2; x.beginPath();
+        vals.forEach((v, i) => {
+          const xx = p.l + (w - p.l - p.r) * i / (vals.length - 1);
+          const yy = p.t + (h - p.t - p.b) * (1 - v);
+          i ? x.lineTo(xx, yy) : x.moveTo(xx, yy);
+        });
+        x.stroke();
+        if (fill) {
+          x.lineTo(p.l + (w - p.l - p.r), h - p.b);
+          x.lineTo(p.l, h - p.b);
+          x.closePath();
+          x.fillStyle = fill; x.fill();
+        }
+        vals.forEach((v, i) => {
+          const xx = p.l + (w - p.l - p.r) * i / (vals.length - 1);
+          const yy = p.t + (h - p.t - p.b) * (1 - v);
+          x.fillStyle = color; x.beginPath(); x.arc(xx, yy, 3, 0, Math.PI * 2); x.fill();
+        });
+      };
+      series([.24,.30,.37,.45,.53,.62,.72,.83,.94], color1, dark ? 'rgba(0,229,255,0.08)' : 'rgba(240,165,26,0.10)');
+      series([.18,.22,.28,.36,.46,.57,.69,.82,.92], color2);
+      x.fillStyle = dark ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.4)';
+      x.font = '9px Consolas';
+      x.fillText('0%', 8, h - p.b + 3);
+      x.fillText('100%', 8, p.t + 6);
+    }
+
+    function drawDualLine(id, dark) {
+      const c = document.getElementById(id);
+      if (!c) return;
+      const dpr = devicePixelRatio || 1;
+      const r = c.getBoundingClientRect();
+      c.width = r.width * dpr; c.height = r.height * dpr;
+      const x = c.getContext('2d'); x.scale(dpr, dpr);
+      const w = r.width, h = r.height;
+      const p = {l:38, r:14, t:12, b:22};
+      x.strokeStyle = dark ? 'rgba(0,229,255,0.08)' : 'rgba(0,0,0,0.07)';
+      x.lineWidth = 1;
+      for (let i = 0; i <= 4; i++) {
+        const y = p.t + (h - p.t - p.b) * i / 4;
+        x.beginPath(); x.moveTo(p.l, y); x.lineTo(w - p.r, y); x.stroke();
+      }
+      for (let i = 0; i <= 6; i++) {
+        const xx = p.l + (w - p.l - p.r) * i / 6;
+        x.beginPath(); x.moveTo(xx, p.t); x.lineTo(xx, h - p.b); x.stroke();
+      }
+      const series = (vals, color) => {
+        x.strokeStyle = color; x.lineWidth = 2;
+        x.beginPath();
+        vals.forEach((v, i) => {
+          const xx = p.l + (w - p.l - p.r) * i / (vals.length - 1);
+          const yy = p.t + (h - p.t - p.b) * (1 - v);
+          i ? x.lineTo(xx, yy) : x.moveTo(xx, yy);
+        });
+        x.stroke();
+      };
+      series([.30,.40,.50,.58,.65,.72,.78,.84,.88], '#00e5ff');
+      series([.20,.28,.38,.46,.54,.60,.66,.72,.78], '#ff2e7e');
+    }
+
+    requestAnimationFrame(() => {
+      const dark = (key === 'a' || key === 'c' || key === 'e');
+      const c1 = dark ? '#00e5ff' : (key === 'd' ? '#0d7a4f' : (key === 'f' ? '#e87a3a' : '#2b6cff'));
+      const c2 = dark ? '#ff2e7e' : (key === 'd' ? '#a8651b' : (key === 'f' ? '#e8c03a' : '#18a957'));
+      const map = {
+        a: () => drawLineChart('chartA', c1, c2, true),
+        b: () => drawLineChart('chartB', c1, c2, false),
+        c: () => { drawLineChart('chartC1', c1, c2, true); drawDualLine('chartC2', true); },
+        d: () => drawLineChart('chartD', c1, c2, false),
+        e: () => drawLineChart('chartE', c1, c2, true),
+        f: () => drawLineChart('chartF', c1, c2, false),
+      };
+      if (map[key]) map[key]();
+    });
+  </script>
+</body>
+</html>
