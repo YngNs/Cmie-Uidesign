@@ -1,0 +1,51 @@
+<UserControl x:Class="Cmie.MotorTest.Wpf.Views.Project.StageHost"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Border Background="{DynamicResource PanelBrush}"
+            BorderBrush="{DynamicResource LineBrush}" BorderThickness="1" CornerRadius="10">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="34"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0" Margin="8,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="4,0,10,0">
+                    <TextBlock Text="内容视图" FontWeight="SemiBold" Foreground="{DynamicResource TextBrush}"/>
+                    <TextBlock x:Name="HeaderHint" Text="点击左侧试验打开数据表" Margin="10,0,0,0" FontSize="10"
+                               Foreground="{DynamicResource MutedBrush}"/>
+                </StackPanel>
+                <Border x:Name="TaskbarRoot" Grid.Column="1" Visibility="Collapsed">
+                    <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Disabled"
+                                  HorizontalAlignment="Stretch" VerticalAlignment="Center">
+                        <StackPanel x:Name="TaskbarPanel" Orientation="Horizontal" HorizontalAlignment="Right"/>
+                    </ScrollViewer>
+                </Border>
+            </Grid>
+            <Border Grid.Row="0" VerticalAlignment="Bottom" Height="1" Background="{DynamicResource LineBrush}"/>
+
+            <Grid Grid.Row="1" Background="{DynamicResource AppBackground}">
+                <Grid x:Name="EmptyHint" IsHitTestVisible="False">
+                    <Border Width="330" Padding="24" HorizontalAlignment="Center" VerticalAlignment="Center"
+                            Background="{DynamicResource MetricBrush}" BorderBrush="{DynamicResource LineBrush}"
+                            BorderThickness="1" CornerRadius="12">
+                        <StackPanel>
+                            <TextBlock Text="◇" HorizontalAlignment="Center" FontSize="26" Foreground="{DynamicResource AccentBrush}"/>
+                            <TextBlock Text="试验浮窗桌面待命" Margin="0,8,0,6" HorizontalAlignment="Center"
+                                       Style="{StaticResource HeadingTextStyle}" FontSize="16" Foreground="{DynamicResource TextBrush}"/>
+                            <TextBlock Text="点击左侧试验项目，可打开多个浮窗拖拽叠放，并与紧凑实时数据同屏。"
+                                       TextAlignment="Center" TextWrapping="Wrap" LineHeight="20"
+                                       Foreground="{DynamicResource MutedBrush}"/>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+                <Canvas x:Name="FloatCanvas" ClipToBounds="True" Background="Transparent"
+                        SizeChanged="FloatCanvas_SizeChanged"/>
+            </Grid>
+
+        </Grid>
+    </Border>
+</UserControl>

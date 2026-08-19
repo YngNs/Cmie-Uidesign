@@ -1,0 +1,327 @@
+<UserControl x:Class="Cmie.MotorTest.Wpf.Dialogs.LoginOverlay"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             FontFamily="{StaticResource UiFont}">
+    <UserControl.Resources>
+        <LinearGradientBrush x:Key="LoginEnterBrush" StartPoint="0,0.5" EndPoint="1,0.5">
+            <GradientStop Color="#FF0284C7" Offset="0"/>
+            <GradientStop Color="#FF06B6D4" Offset="1"/>
+        </LinearGradientBrush>
+    </UserControl.Resources>
+
+    <Grid MouseLeftButtonDown="Root_MouseLeftButtonDown">
+        <Grid.Background>
+            <LinearGradientBrush StartPoint="0.15,0" EndPoint="0.9,1">
+                <GradientStop Color="#FFEFF4F8" Offset="0"/>
+                <GradientStop Color="#FFE4EDF5" Offset="0.55"/>
+                <GradientStop Color="#FFD8E6F0" Offset="1"/>
+            </LinearGradientBrush>
+        </Grid.Background>
+
+        <!-- 白天柔和光晕 -->
+        <Ellipse Width="720" Height="520"
+                 HorizontalAlignment="Center" VerticalAlignment="Center"
+                 Margin="-280,-40,0,0" IsHitTestVisible="False">
+            <Ellipse.Fill>
+                <RadialGradientBrush>
+                    <GradientStop Color="#5500B4D8" Offset="0"/>
+                    <GradientStop Color="#22028AC8" Offset="0.4"/>
+                    <GradientStop Color="#00000000" Offset="1"/>
+                </RadialGradientBrush>
+            </Ellipse.Fill>
+        </Ellipse>
+        <Ellipse Width="480" Height="380"
+                 HorizontalAlignment="Right" VerticalAlignment="Bottom"
+                 Margin="0,0,-80,-60" IsHitTestVisible="False">
+            <Ellipse.Fill>
+                <RadialGradientBrush>
+                    <GradientStop Color="#3306B6D4" Offset="0"/>
+                    <GradientStop Color="#00000000" Offset="1"/>
+                </RadialGradientBrush>
+            </Ellipse.Fill>
+        </Ellipse>
+
+        <!-- 线框装饰圆 -->
+        <Canvas IsHitTestVisible="False" Opacity="0.28" ClipToBounds="True"
+                HorizontalAlignment="Left" Width="400" Margin="24,48,0,0">
+            <Ellipse Canvas.Left="20" Canvas.Top="10" Width="280" Height="280"
+                     Stroke="#FF0284C7" StrokeThickness="1.2"/>
+            <Ellipse Canvas.Left="55" Canvas.Top="45" Width="210" Height="210"
+                     Stroke="#FF06B6D4" StrokeThickness="1"/>
+            <Ellipse Canvas.Left="90" Canvas.Top="80" Width="140" Height="140"
+                     Stroke="#FF0284C7" StrokeThickness="1"/>
+        </Canvas>
+
+        <!-- 左侧浮动图表 -->
+        <Canvas IsHitTestVisible="False"
+                HorizontalAlignment="Left" VerticalAlignment="Center"
+                Width="340" Height="320" Margin="40,0,0,48" Opacity="0.92">
+            <Border Canvas.Left="12" Canvas.Top="16" Width="200" Height="110"
+                    Background="#F2FFFFFF" BorderBrush="#55028AC8" BorderThickness="1"
+                    CornerRadius="12" Padding="12,10">
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="18" ShadowDepth="6" Direction="270" Color="#0F172A" Opacity="0.12"/>
+                </Border.Effect>
+                <Border.RenderTransform>
+                    <RotateTransform Angle="-6"/>
+                </Border.RenderTransform>
+                <Grid>
+                    <Path Stroke="#FF0284C7" StrokeThickness="2" StrokeLineJoin="Round"
+                          Data="M8,78 L28,62 L48,70 L72,40 L96,52 L118,28 L142,46 L168,22 L188,34"
+                          Stretch="Fill" Margin="4,8,4,18">
+                        <Path.Effect>
+                            <DropShadowEffect Color="#0284C7" BlurRadius="6" ShadowDepth="0" Opacity="0.35"/>
+                        </Path.Effect>
+                    </Path>
+                    <TextBlock Text="U / V" Foreground="#FF64748B" FontSize="10" VerticalAlignment="Bottom"/>
+                </Grid>
+            </Border>
+
+            <Border Canvas.Left="140" Canvas.Top="108" Width="188" Height="100"
+                    Background="#F2FFFFFF" BorderBrush="#4406B6D4" BorderThickness="1"
+                    CornerRadius="12" Padding="12,10">
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="16" ShadowDepth="5" Direction="270" Color="#0F172A" Opacity="0.1"/>
+                </Border.Effect>
+                <Border.RenderTransform>
+                    <RotateTransform Angle="5"/>
+                </Border.RenderTransform>
+                <Grid>
+                    <Path Stroke="#FF06B6D4" StrokeThickness="2" StrokeLineJoin="Round"
+                          Data="M6,70 L30,48 L52,58 L78,30 L104,44 L130,20 L156,36 L180,18"
+                          Stretch="Fill" Margin="4,8,4,18">
+                        <Path.Effect>
+                            <DropShadowEffect Color="#06B6D4" BlurRadius="6" ShadowDepth="0" Opacity="0.3"/>
+                        </Path.Effect>
+                    </Path>
+                    <TextBlock Text="I / A" Foreground="#FF64748B" FontSize="10" VerticalAlignment="Bottom"/>
+                </Grid>
+            </Border>
+
+            <Border Canvas.Left="24" Canvas.Top="200" Width="176" Height="96"
+                    Background="#F2FFFFFF" BorderBrush="#40028AC8" BorderThickness="1"
+                    CornerRadius="12" Padding="14,12">
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="14" ShadowDepth="5" Direction="270" Color="#0F172A" Opacity="0.1"/>
+                </Border.Effect>
+                <Border.RenderTransform>
+                    <RotateTransform Angle="-3"/>
+                </Border.RenderTransform>
+                <Grid>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center"
+                                VerticalAlignment="Bottom" Height="56">
+                        <Border Width="13" Height="26" CornerRadius="3" Background="#66028AC8" Margin="0,0,7,0" VerticalAlignment="Bottom"/>
+                        <Border Width="13" Height="42" CornerRadius="3" Background="#9906B6D4" Margin="0,0,7,0" VerticalAlignment="Bottom"/>
+                        <Border Width="13" Height="34" CornerRadius="3" Background="#66028AC8" Margin="0,0,7,0" VerticalAlignment="Bottom"/>
+                        <Border Width="13" Height="54" CornerRadius="3" Background="#CC0284C7" Margin="0,0,7,0" VerticalAlignment="Bottom">
+                            <Border.Effect>
+                                <DropShadowEffect Color="#0284C7" BlurRadius="8" ShadowDepth="0" Opacity="0.35"/>
+                            </Border.Effect>
+                        </Border>
+                        <Border Width="13" Height="38" CornerRadius="3" Background="#66028AC8" Margin="0,0,7,0" VerticalAlignment="Bottom"/>
+                        <Border Width="13" Height="48" CornerRadius="3" Background="#9906B6D4" VerticalAlignment="Bottom"/>
+                    </StackPanel>
+                    <TextBlock Text="P / kW" Foreground="#FF64748B" FontSize="10" VerticalAlignment="Top"/>
+                </Grid>
+            </Border>
+        </Canvas>
+
+        <!-- 左下品牌 -->
+        <StackPanel VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="40,0,0,36">
+            <StackPanel Orientation="Horizontal">
+                <Grid Width="36" Height="36" Margin="0,0,12,0">
+                    <Path Fill="#18028AC8" Stroke="#FF0284C7" StrokeThickness="1.6"
+                          Data="M18,2 L32,10 L32,26 L18,34 L4,26 L4,10 Z"/>
+                    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                        <Border Width="14" Height="2" Background="#FF0284C7" Margin="0,1.5" CornerRadius="1"/>
+                        <Border Width="14" Height="2" Background="#FF0284C7" Margin="0,1.5" CornerRadius="1"/>
+                        <Border Width="14" Height="2" Background="#FF06B6D4" Margin="0,1.5" CornerRadius="1"/>
+                    </StackPanel>
+                </Grid>
+                <StackPanel VerticalAlignment="Center">
+                    <TextBlock FontSize="26" FontWeight="Bold">
+                        <Run Text="CMIE" Foreground="#FF0F172A"/>
+                        <Run Text=" Lab" Foreground="#FF0284C7"/>
+                    </TextBlock>
+                </StackPanel>
+            </StackPanel>
+            <TextBlock Text="MOTOR TESTING &amp; ANALYSIS SOFTWARE"
+                       Foreground="#FF64748B" FontSize="10.5" FontWeight="SemiBold" Margin="48,6,0,0"/>
+            <TextBlock Text="精密测试 · 智能分析 · 可靠结果"
+                       Foreground="#FF94A3B8" FontSize="11" Margin="48,8,0,0"/>
+        </StackPanel>
+
+        <!-- 登录卡：居中 · 白天白卡片 -->
+        <Border Width="380"
+                MaxWidth="380"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Background="#FAFFFFFF"
+                BorderBrush="#1A0F172A"
+                BorderThickness="1"
+                CornerRadius="16"
+                Padding="36,32,36,28"
+                MouseLeftButtonDown="Card_MouseLeftButtonDown">
+            <Border.Effect>
+                <DropShadowEffect Color="#0F172A" BlurRadius="40" ShadowDepth="12" Direction="270" Opacity="0.14"/>
+            </Border.Effect>
+
+            <StackPanel>
+                <Grid Width="56" Height="56" HorizontalAlignment="Center" Margin="0,0,0,16">
+                    <Ellipse Stroke="#FF0284C7" StrokeThickness="1.5" Fill="#14028AC8"/>
+                    <Ellipse Width="44" Height="44" Fill="#FFF1F5F9"
+                             HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <Path Fill="#FF0284C7" Stretch="Uniform" Width="22" Height="22"
+                          HorizontalAlignment="Center" VerticalAlignment="Center"
+                          Data="M12,12 A5,5 0 1 0 12,2 A5,5 0 1 0 12,12 Z M4,22 C4,17 7.5,14 12,14 C16.5,14 20,17 20,22 Z"/>
+                </Grid>
+
+                <TextBlock Text="欢迎回来" Foreground="#FF0F172A" FontSize="26"
+                           Style="{StaticResource HeadingTextStyle}"
+                           FontWeight="SemiBold"
+                           HorizontalAlignment="Center"/>
+                <TextBlock Text="登录以继续使用 CMIE 电机测试"
+                           Foreground="#FF64748B" FontSize="12.5"
+                           HorizontalAlignment="Center" Margin="0,8,0,26"/>
+
+                <TextBlock Text="用户名" Foreground="#FF475569" FontSize="12" Margin="0,0,0,8"/>
+                <Border x:Name="UserFieldBorder" Height="44" CornerRadius="10" BorderThickness="1"
+                        BorderBrush="#FF0284C7" Background="#FFF8FAFC" Margin="0,0,0,16">
+                    <Border.Effect>
+                        <DropShadowEffect x:Name="UserFieldGlow" Color="#0284C7" BlurRadius="12" ShadowDepth="0" Opacity="0.28"/>
+                    </Border.Effect>
+                    <Grid Margin="12,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="28"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Path Fill="#FF64748B" Stretch="Uniform" Width="15" Height="15" VerticalAlignment="Center"
+                              Data="M12,12 A4.5,4.5 0 1 0 12,3 A4.5,4.5 0 1 0 12,12 Z M5,20 C5,16 8,14 12,14 C16,14 19,16 19,20 Z"/>
+                        <TextBox x:Name="UsernameBox" Grid.Column="1" Text="admin"
+                                 Background="Transparent" BorderThickness="0"
+                                 Foreground="#FF0F172A" CaretBrush="#FF0284C7" FontSize="14"
+                                 VerticalContentAlignment="Center"
+                                 GotFocus="UserField_GotFocus" LostFocus="UserField_LostFocus"/>
+                    </Grid>
+                </Border>
+
+                <TextBlock Text="密码" Foreground="#FF475569" FontSize="12" Margin="0,0,0,8"/>
+                <Border x:Name="PassFieldBorder" Height="44" CornerRadius="10" BorderThickness="1"
+                        BorderBrush="#1A0F172A" Background="#FFF8FAFC" Margin="0,0,0,18">
+                    <Border.Effect>
+                        <DropShadowEffect x:Name="PassFieldGlow" Color="#0284C7" BlurRadius="12" ShadowDepth="0" Opacity="0"/>
+                    </Border.Effect>
+                    <Grid Margin="12,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="28"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="32"/>
+                        </Grid.ColumnDefinitions>
+                        <Path Fill="#FF64748B" Stretch="Uniform" Width="14" Height="14" VerticalAlignment="Center"
+                              Data="M7,10 V8 A5,5 0 0 1 17,8 V10 H18 A2,2 0 0 1 20,12 V19 A2,2 0 0 1 18,21 H6 A2,2 0 0 1 4,19 V12 A2,2 0 0 1 6,10 H7 Z M9,10 H15 V8 A3,3 0 0 0 9,8 Z"/>
+                        <Grid Grid.Column="1">
+                            <PasswordBox x:Name="PasswordBox" Background="Transparent" BorderThickness="0"
+                                         Foreground="#FF0F172A" CaretBrush="#FF0284C7" FontSize="14"
+                                         VerticalContentAlignment="Center"
+                                         GotFocus="PassField_GotFocus" LostFocus="PassField_LostFocus"/>
+                            <TextBox x:Name="PasswordPlainBox" Background="Transparent" BorderThickness="0"
+                                     Foreground="#FF0F172A" CaretBrush="#FF0284C7" FontSize="14"
+                                     VerticalContentAlignment="Center" Visibility="Collapsed"
+                                     GotFocus="PassField_GotFocus" LostFocus="PassField_LostFocus"/>
+                        </Grid>
+                        <Button Grid.Column="2" Background="Transparent" BorderThickness="0" Cursor="Hand"
+                                Click="TogglePassword_Click" ToolTip="显示/隐藏密码" VerticalAlignment="Center">
+                            <Path Stroke="#FF64748B" StrokeThickness="1.5" Fill="Transparent" Stretch="Uniform"
+                                  Width="16" Height="16"
+                                  Data="M1,12 C5,6 9,4 12,4 C15,4 19,6 23,12 C19,18 15,20 12,20 C9,20 5,18 1,12 Z M12,9 A3,3 0 1 1 12,15 A3,3 0 1 1 12,9 Z"/>
+                        </Button>
+                    </Grid>
+                </Border>
+
+                <TextBlock Text="电机类型" Foreground="#FF475569" FontSize="12" Margin="0,0,0,8"/>
+                <UniformGrid Columns="2" Margin="0,0,0,22">
+                    <Border x:Name="MotorLineBorder" Margin="0,0,6,0" Padding="10,12" CornerRadius="10"
+                            BorderThickness="1.5" BorderBrush="#FF0284C7" Background="#14028AC8"
+                            Cursor="Hand" MouseLeftButtonUp="MotorLine_Click">
+                        <Border.Effect>
+                            <DropShadowEffect Color="#0284C7" BlurRadius="8" ShadowDepth="0" Opacity="0.22"/>
+                        </Border.Effect>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                            <Ellipse Width="14" Height="14" Stroke="#FF0284C7" StrokeThickness="1.5"
+                                     Margin="0,0,8,0" VerticalAlignment="Center"/>
+                            <TextBlock Text="工频电机" Foreground="#FF0F172A" FontSize="12" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Border>
+                    <Border x:Name="MotorVfdBorder" Margin="6,0,0,0" Padding="10,12" CornerRadius="10"
+                            BorderThickness="1" BorderBrush="#1A0F172A" Background="#FFF8FAFC"
+                            Cursor="Hand" MouseLeftButtonUp="MotorVfd_Click">
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                            <Path Stroke="#FF64748B" StrokeThickness="1.4" Stretch="Uniform"
+                                  Width="14" Height="10" Margin="0,0,8,0" VerticalAlignment="Center"
+                                  Data="M1,5 C3,1 5,9 7,5 C9,1 11,9 13,5"/>
+                            <TextBlock Text="变频电机" Foreground="#FF64748B" FontSize="12" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Border>
+                </UniformGrid>
+
+                <Border x:Name="LoginStatusPanel" Visibility="Collapsed" Background="#14DC2626"
+                        BorderBrush="#44DC2626" BorderThickness="1" CornerRadius="8"
+                        Padding="10,8" Margin="0,0,0,12">
+                    <TextBlock x:Name="LoginStatusText" Foreground="#FFDC2626" FontSize="11.5"
+                               TextWrapping="Wrap" TextAlignment="Center"/>
+                </Border>
+
+                <Button x:Name="LoginButton" Height="46" Cursor="Hand" Click="Enter_Click" IsDefault="True" Margin="0,0,0,12">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border x:Name="Bd" Background="{StaticResource LoginEnterBrush}" CornerRadius="10">
+                                <Border.Effect>
+                                    <DropShadowEffect Color="#0284C7" BlurRadius="18" ShadowDepth="4" Direction="270" Opacity="0.28"/>
+                                </Border.Effect>
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="Bd" Property="Opacity" Value="0.92"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Button.Template>
+                    <StackPanel Orientation="Horizontal">
+                        <Path Stroke="White" StrokeThickness="1.6" Stretch="Uniform" Width="15" Height="15"
+                              Margin="0,0,8,0" VerticalAlignment="Center"
+                              Data="M10,3 H4 A2,2 0 0 0 2,5 V19 A2,2 0 0 0 4,21 H10 M14,12 H7 M14,12 L11,9 M14,12 L11,15"/>
+                        <TextBlock x:Name="LoginButtonText" Text="进入" Foreground="White" FontSize="14" FontWeight="SemiBold"/>
+                    </StackPanel>
+                </Button>
+
+                <Button Height="44" Cursor="Hand" Click="Exit_Click" IsCancel="True">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border x:Name="Bd" Background="#FFF8FAFC" BorderBrush="#2A0F172A"
+                                    BorderThickness="1" CornerRadius="10">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="Bd" Property="BorderBrush" Value="#FF0284C7"/>
+                                    <Setter TargetName="Bd" Property="Background" Value="#14028AC8"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Button.Template>
+                    <StackPanel Orientation="Horizontal">
+                        <Path Stroke="#FF475569" StrokeThickness="1.6" Stretch="Uniform" Width="15" Height="15"
+                              Margin="0,0,8,0" VerticalAlignment="Center"
+                              Data="M10,3 H4 A2,2 0 0 0 2,5 V19 A2,2 0 0 0 4,21 H10 M7,12 H16 M16,12 L13,9 M16,12 L13,15"/>
+                        <TextBlock Text="退出" Foreground="#FF334155" FontSize="14" FontWeight="SemiBold"/>
+                    </StackPanel>
+                </Button>
+
+                <TextBlock Text="Secure · Reliable · Built for Performance"
+                           Foreground="#FF94A3B8" FontSize="10.5"
+                           HorizontalAlignment="Center" Margin="0,22,0,0"/>
+            </StackPanel>
+        </Border>
+    </Grid>
+</UserControl>

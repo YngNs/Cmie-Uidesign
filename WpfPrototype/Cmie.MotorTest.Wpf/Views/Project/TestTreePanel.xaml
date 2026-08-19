@@ -1,0 +1,76 @@
+<UserControl x:Class="Cmie.MotorTest.Wpf.Views.Project.TestTreePanel"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <UserControl.Resources>
+        <Style x:Key="TreeItemStyle" TargetType="Button">
+            <Setter Property="Height" Value="34"/>
+            <Setter Property="Margin" Value="5,1"/>
+            <Setter Property="Padding" Value="12,0"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Root" Background="{TemplateBinding Background}" CornerRadius="6">
+                            <ContentPresenter Margin="{TemplateBinding Padding}" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Root" Property="Background" Value="{DynamicResource AccentSoftBrush}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="GroupStyle" TargetType="TextBlock">
+            <Setter Property="Margin" Value="13,12,8,4"/>
+            <Setter Property="Foreground" Value="{DynamicResource MutedBrush}"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+        </Style>
+    </UserControl.Resources>
+
+    <Border Background="{DynamicResource PanelBrush}"
+            BorderBrush="{DynamicResource LineBrush}" BorderThickness="1" CornerRadius="10">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="44"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0" Margin="14,0,8,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="32"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="试验列表" VerticalAlignment="Center" FontWeight="SemiBold" FontSize="14"
+                           Foreground="{DynamicResource TextBrush}"/>
+                <Button Grid.Column="1" Content="‹" ToolTip="收起试验列表"
+                        Style="{StaticResource TopButtonStyle}" Padding="7,3" Click="Collapse_Click"/>
+            </Grid>
+            <Border Grid.Row="0" VerticalAlignment="Bottom" Height="1" Background="{DynamicResource LineBrush}"/>
+
+            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                <StackPanel Margin="0,2,0,10">
+                    <TextBlock Text="基础试验" Style="{StaticResource GroupStyle}"/>
+                    <Button x:Name="ResistanceButton" Tag="resistance" Content="○  直流电阻和绝缘电阻测量" Style="{StaticResource TreeItemStyle}" Click="Test_Click"/>
+                    <Button x:Name="NoLoadButton" Tag="noload" Content="○  空载特性试验" Style="{StaticResource TreeItemStyle}" Click="Test_Click"/>
+                    <Button x:Name="LoadButton" Tag="load" Content="○  负载特性试验" Style="{StaticResource TreeItemStyle}" Click="Test_Click"/>
+                    <TextBlock Text="效率分析" Style="{StaticResource GroupStyle}"/>
+                    <Button x:Name="MethodAButton" Tag="method-a" Content="○  A 法数据分析" Style="{StaticResource TreeItemStyle}" Padding="24,0,8,0" Click="Test_Click"/>
+                    <Button x:Name="MethodBButton" Tag="method-b" Content="○  B 法数据分析" Style="{StaticResource TreeItemStyle}" Padding="24,0,8,0" Click="Test_Click"/>
+                    <TextBlock Text="温升试验" Style="{StaticResource GroupStyle}"/>
+                    <Button x:Name="TempRatedButton" Tag="temp-rated" Content="○  额定工况" Style="{StaticResource TreeItemStyle}" Padding="24,0,8,0" Click="Test_Click"/>
+                    <Button x:Name="TempLowButton" Tag="temp-low" Content="○  低频工况" Style="{StaticResource TreeItemStyle}" Padding="24,0,8,0" Click="Test_Click"/>
+                    <TextBlock Text="其他" Style="{StaticResource GroupStyle}"/>
+                    <Button x:Name="LockedButton" Tag="locked" Content="○  堵转特性试验" Style="{StaticResource TreeItemStyle}" Click="Test_Click"/>
+                    <Button x:Name="OverspeedButton" Tag="overspeed" Content="○  超速 / 振动噪声" Style="{StaticResource TreeItemStyle}" Click="Test_Click"/>
+                </StackPanel>
+            </ScrollViewer>
+        </Grid>
+    </Border>
+</UserControl>
