@@ -1,0 +1,176 @@
+<UserControl x:Class="Cmie.MotorTest.Wpf.Views.SettingsPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Style="{StaticResource PageRootStyle}">
+    <UserControl.Resources>
+        <!-- 颜色全部继承应用级动态主题，局部仅保留布局和阴影。 -->
+        <DropShadowEffect x:Key="PrecisionCardShadow" BlurRadius="16" ShadowDepth="4" Direction="270" Color="#0F172A" Opacity="0.07"/>
+        <DropShadowEffect x:Key="PrecisionButtonShadow" BlurRadius="14" ShadowDepth="4" Direction="270" Color="#007A87" Opacity="0.20"/>
+
+        <Style x:Key="PrecisionShellStyle" TargetType="Border">
+            <Setter Property="Background" Value="{DynamicResource PanelBrush}"/><Setter Property="BorderBrush" Value="{DynamicResource LineBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/><Setter Property="CornerRadius" Value="10"/><Setter Property="Effect" Value="{StaticResource PrecisionCardShadow}"/>
+        </Style>
+        <Style x:Key="PrecisionButtonStyle" TargetType="Button">
+            <Setter Property="Height" Value="38"/><Setter Property="MinWidth" Value="96"/><Setter Property="Padding" Value="14,0"/>
+            <Setter Property="Background" Value="{DynamicResource PanelBrush}"/><Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource LineBrush}"/><Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="FontWeight" Value="SemiBold"/><Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Button"><Border x:Name="Chrome" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="9" Padding="{TemplateBinding Padding}"><ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/></Border><ControlTemplate.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Chrome" Property="Background" Value="{DynamicResource AccentSoftBrush}"/><Setter TargetName="Chrome" Property="BorderBrush" Value="{DynamicResource AccentBrush}"/><Setter Property="Foreground" Value="{DynamicResource AccentBrush}"/></Trigger><Trigger Property="IsPressed" Value="True"><Setter TargetName="Chrome" Property="Opacity" Value="0.82"/></Trigger></ControlTemplate.Triggers></ControlTemplate></Setter.Value></Setter>
+        </Style>
+        <Style x:Key="PrecisionPrimaryButtonStyle" TargetType="Button" BasedOn="{StaticResource PrecisionButtonStyle}">
+            <Setter Property="Background" Value="{DynamicResource AccentBrush}"/><Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}"/><Setter Property="Effect" Value="{StaticResource PrecisionButtonShadow}"/>
+        </Style>
+        <Style x:Key="ActionButtonStyle" TargetType="Button" BasedOn="{StaticResource PrecisionButtonStyle}"/>
+        <Style x:Key="PrimaryActionButtonStyle" TargetType="Button" BasedOn="{StaticResource PrecisionPrimaryButtonStyle}"/>
+        <Style x:Key="SettingsNavStyle" TargetType="Button">
+            <Setter Property="Height" Value="44"/>
+            <Setter Property="Margin" Value="0,0,0,4"/>
+            <Setter Property="Padding" Value="14,0"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Foreground" Value="{DynamicResource MutedBrush}"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="3,0,0,0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Chrome" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="8" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter VerticalAlignment="Center" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Chrome" Property="Background" Value="{DynamicResource AccentSoftBrush}"/><Setter Property="Foreground" Value="{DynamicResource AccentBrush}"/></Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="SettingsLabelStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="12"/><Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="{DynamicResource MutedBrush}"/><Setter Property="Margin" Value="0,0,0,6"/>
+        </Style>
+        <Style x:Key="SettingsInputStyle" TargetType="TextBox">
+            <Setter Property="Height" Value="40"/><Setter Property="Padding" Value="11,0"/><Setter Property="Background" Value="{DynamicResource MetricBrush}"/>
+            <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/><Setter Property="BorderBrush" Value="{DynamicResource LineBrush}"/><Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/><Setter Property="CaretBrush" Value="{DynamicResource AccentBrush}"/>
+            <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="TextBox"><Border x:Name="Chrome" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="9"><ScrollViewer x:Name="PART_ContentHost" Margin="{TemplateBinding Padding}" VerticalAlignment="Center"/></Border><ControlTemplate.Triggers><Trigger Property="IsKeyboardFocused" Value="True"><Setter TargetName="Chrome" Property="BorderBrush" Value="{DynamicResource AccentBrush}"/><Setter TargetName="Chrome" Property="Background" Value="{DynamicResource PanelBrush}"/></Trigger><Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Chrome" Property="BorderBrush" Value="{DynamicResource AccentBrush}"/></Trigger></ControlTemplate.Triggers></ControlTemplate></Setter.Value></Setter>
+        </Style>
+        <Style x:Key="SectionCardStyle" TargetType="Border">
+            <Setter Property="Background" Value="{DynamicResource PanelBrush}"/><Setter Property="BorderBrush" Value="{DynamicResource LineBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/><Setter Property="CornerRadius" Value="10"/><Setter Property="Padding" Value="20"/><Setter Property="Effect" Value="{StaticResource PrecisionCardShadow}"/>
+        </Style>
+        <Style x:Key="DeviceCardStyle" TargetType="Border" BasedOn="{StaticResource SectionCardStyle}"><Setter Property="Padding" Value="18"/><Setter Property="Margin" Value="0,0,14,0"/></Style>
+        <Style x:Key="PrecisionCheckBoxStyle" TargetType="CheckBox">
+            <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/><Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="CheckBox"><StackPanel Orientation="Horizontal"><Border x:Name="Box" Width="17" Height="17" CornerRadius="4" BorderThickness="1" BorderBrush="{DynamicResource LineBrush}" Background="{DynamicResource PanelBrush}" VerticalAlignment="Center"><Path x:Name="Tick" Data="M3,8 L7,12 L14,4" Stroke="White" StrokeThickness="2" StrokeStartLineCap="Round" StrokeEndLineCap="Round" Visibility="Collapsed"/></Border><ContentPresenter Margin="8,0,0,0" VerticalAlignment="Center"/></StackPanel><ControlTemplate.Triggers><Trigger Property="IsChecked" Value="True"><Setter TargetName="Box" Property="Background" Value="{DynamicResource AccentBrush}"/><Setter TargetName="Box" Property="BorderBrush" Value="{DynamicResource AccentBrush}"/><Setter TargetName="Tick" Property="Visibility" Value="Visible"/></Trigger></ControlTemplate.Triggers></ControlTemplate></Setter.Value></Setter>
+        </Style>
+        <Style x:Key="ToggleSwitchStyle" TargetType="CheckBox">
+            <Setter Property="Cursor" Value="Hand"/><Setter Property="Template"><Setter.Value><ControlTemplate TargetType="CheckBox"><Grid Width="42" Height="24"><Border x:Name="Track" CornerRadius="12" Background="#5264748B"/><Ellipse x:Name="Knob" Width="18" Height="18" Fill="White" HorizontalAlignment="Left" Margin="3,0" Effect="{StaticResource PrecisionCardShadow}"/></Grid><ControlTemplate.Triggers><Trigger Property="IsChecked" Value="True"><Setter TargetName="Track" Property="Background" Value="{DynamicResource AccentBrush}"/><Setter TargetName="Knob" Property="HorizontalAlignment" Value="Right"/></Trigger></ControlTemplate.Triggers></ControlTemplate></Setter.Value></Setter>
+        </Style>
+        <Style TargetType="CheckBox" BasedOn="{StaticResource PrecisionCheckBoxStyle}"/>
+    </UserControl.Resources>
+
+    <Grid Margin="12,10">
+        <Grid.RowDefinitions><RowDefinition Height="62"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+        <StackPanel>
+            <TextBlock Text="工作区 / 相关设置" FontSize="10.5" Foreground="{DynamicResource MutedBrush}"/>
+            <TextBlock Text="相关设置" Margin="0,5,0,0" Style="{StaticResource HeadingTextStyle}" FontSize="24"/>
+        </StackPanel>
+
+        <Border Grid.Row="1" Style="{StaticResource PrecisionShellStyle}" Padding="0" ClipToBounds="True">
+            <Grid>
+                <Grid.ColumnDefinitions><ColumnDefinition Width="200"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                <Border Background="{DynamicResource MetricBrush}" BorderBrush="{DynamicResource LineSoftBrush}" BorderThickness="0,0,1,0" Padding="10,14">
+                    <StackPanel>
+                        <Button x:Name="RatioNav" Tag="ratio" Style="{StaticResource SettingsNavStyle}" Click="Nav_Click"><StackPanel Orientation="Horizontal"><Path Width="17" Height="17" Margin="0,0,10,0" Stretch="Uniform" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" StrokeThickness="1.7" Data="M5,20 L5,14 M12,20 L12,8 M19,20 L19,4"/><TextBlock Text="变比设置"/></StackPanel></Button>
+                        <Button x:Name="ModelNav" Tag="model" Style="{StaticResource SettingsNavStyle}" Click="Nav_Click"><StackPanel Orientation="Horizontal"><Path Width="17" Height="17" Margin="0,0,10,0" Stretch="Uniform" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" StrokeThickness="1.7" Data="M12,8 A4,4 0 1 0 12,16 A4,4 0 1 0 12,8 M12,2 L12,5 M12,19 L12,22 M2,12 L5,12 M19,12 L22,12 M5,5 L7,7 M17,17 L19,19 M19,5 L17,7 M7,17 L5,19"/><TextBlock Text="型号参数"/></StackPanel></Button>
+                        <Button x:Name="CommNav" Tag="comm" Style="{StaticResource SettingsNavStyle}" Click="Nav_Click"><StackPanel Orientation="Horizontal"><Path Width="17" Height="17" Margin="0,0,10,0" Stretch="Uniform" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" StrokeThickness="1.7" Data="M5,12 C9,8 15,8 19,12 M2,8 C8,2 16,2 22,8 M8,16 C10,14 14,14 16,16 M12,20 L12,20.1"/><TextBlock Text="通讯设置"/></StackPanel></Button>
+                        <Button x:Name="TempNav" Tag="temp" Style="{StaticResource SettingsNavStyle}" Click="Nav_Click"><StackPanel Orientation="Horizontal"><Path Width="17" Height="17" Margin="0,0,10,0" Stretch="Uniform" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" StrokeThickness="1.7" Data="M9,14 L9,5 A3,3 0 0 1 15,5 L15,14 A5,5 0 1 1 9,14"/><TextBlock Text="温度配置"/></StackPanel></Button>
+                    </StackPanel>
+                </Border>
+
+                <Grid Grid.Column="1" Margin="16">
+                    <ScrollViewer x:Name="RatioPanel" VerticalScrollBarVisibility="Auto">
+                        <Border Style="{StaticResource SectionCardStyle}" Width="640" HorizontalAlignment="Left" VerticalAlignment="Top">
+                            <StackPanel>
+                                <TextBlock Text="变比设置" FontSize="17" FontWeight="SemiBold"/>
+                                <TextBlock Text="设置采样刷新、转矩传感器与测量仪表的换算参数。" Margin="0,5,0,18" Foreground="{DynamicResource MutedBrush}"/>
+                                <Border Background="{DynamicResource MetricBrush}" CornerRadius="9" Padding="14">
+                                    <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="12"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                        <StackPanel><TextBlock Text="采样刷新率 (ms)" Style="{StaticResource SettingsLabelStyle}"/><TextBox Text="500" Style="{StaticResource SettingsInputStyle}"/></StackPanel>
+                                        <StackPanel Grid.Column="2"><TextBlock Text="每转对应脉冲" Style="{StaticResource SettingsLabelStyle}"/><TextBox Text="1024" Style="{StaticResource SettingsInputStyle}"/></StackPanel>
+                                    </Grid>
+                                </Border>
+                                <Grid Margin="0,14,0,0"><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="12"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                    <StackPanel><TextBlock Text="扭矩量程 (Nm)" Style="{StaticResource SettingsLabelStyle}"/><TextBox Text="100" Style="{StaticResource SettingsInputStyle}"/></StackPanel>
+                                    <StackPanel Grid.Column="2"><TextBlock Text="输出电压 (V)" Style="{StaticResource SettingsLabelStyle}"/><TextBox Text="10" Style="{StaticResource SettingsInputStyle}"/></StackPanel>
+                                </Grid>
+                                <Border Height="1" Background="{DynamicResource LineBrush}" Margin="0,20"/>
+                                <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                                    <StackPanel><TextBlock Text="仪表变比" FontSize="15" FontWeight="SemiBold"/><CheckBox Content="自动设定仪表变比" IsChecked="True" Margin="0,9,0,0"/></StackPanel>
+                                    <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Bottom"><Button Content="恢复默认" Style="{StaticResource ActionButtonStyle}" Click="Reset_Click"/><Button Content="保存设置" Tag="变比设置" Margin="8,0,0,0" Style="{StaticResource PrimaryActionButtonStyle}" Click="Save_Click"/></StackPanel>
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+                    </ScrollViewer>
+
+                    <ScrollViewer x:Name="ModelPanel" Visibility="Collapsed" VerticalScrollBarVisibility="Auto">
+                        <Border Style="{StaticResource SectionCardStyle}" Width="980" HorizontalAlignment="Left" VerticalAlignment="Top">
+                            <StackPanel>
+                                <TextBlock Text="型号参数" FontSize="17" FontWeight="SemiBold"/><TextBlock Text="从左侧选择产品型号，在右侧维护铭牌与结构参数。" Margin="0,5,0,16" Foreground="{DynamicResource MutedBrush}"/>
+                                <Grid MinHeight="360"><Grid.ColumnDefinitions><ColumnDefinition Width="210"/><ColumnDefinition Width="1"/><ColumnDefinition Width="18"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                    <StackPanel><TextBlock Text="产品型号" Style="{StaticResource SettingsLabelStyle}"/><ListBox SelectedIndex="0" Background="{DynamicResource MetricBrush}" BorderThickness="0" Padding="6"><ListBoxItem Content="Y2-160M-4" Padding="10"/><ListBoxItem Content="YE3-132S-4" Padding="10"/><ListBoxItem Content="YX3-180M-4" Padding="10"/></ListBox></StackPanel>
+                                    <Border Grid.Column="1" Background="{DynamicResource LineBrush}"/>
+                                    <UniformGrid Grid.Column="3" Columns="2">
+                                        <StackPanel Margin="0,0,12,12"><TextBlock Text="电机型号" Style="{StaticResource SettingsLabelStyle}"/><TextBox Text="Y2-160M-4" Style="{StaticResource SettingsInputStyle}"/></StackPanel>
+                                        <StackPanel Margin="0,0,0,12"><TextBlock Text="额定功率 (kW)" Style="{StaticResource SettingsLabelStyle}"/><TextBox Text="11" Style="{StaticResource SettingsInputStyle}"/></StackPanel>
+                                        <StackPanel Margin="0,0,12,12"><TextBlock Text="额定电压 (V)" Style="{StaticResource SettingsLabelStyle}"/><TextBox Text="380" Style="{StaticResource SettingsInputStyle}"/></StackPanel>
+                                        <StackPanel Margin="0,0,0,12"><TextBlock Text="额定电流 (A)" Style="{StaticResource SettingsLabelStyle}"/><TextBox Text="15.0" Style="{StaticResource SettingsInputStyle}"/></StackPanel>
+                                        <StackPanel Margin="0,0,12,12"><TextBlock Text="额定频率 (Hz)" Style="{StaticResource SettingsLabelStyle}"/><TextBox Text="50" Style="{StaticResource SettingsInputStyle}"/></StackPanel>
+                                        <StackPanel Margin="0,0,0,12"><TextBlock Text="额定转速 (rpm)" Style="{StaticResource SettingsLabelStyle}"/><TextBox Text="1460" Style="{StaticResource SettingsInputStyle}"/></StackPanel>
+                                        <StackPanel Margin="0,0,12,12"><TextBlock Text="绝缘等级" Style="{StaticResource SettingsLabelStyle}"/><TextBox Text="F" Style="{StaticResource SettingsInputStyle}"/></StackPanel>
+                                        <StackPanel Margin="0,0,0,12"><TextBlock Text="接法" Style="{StaticResource SettingsLabelStyle}"/><TextBox Text="Y" Style="{StaticResource SettingsInputStyle}"/></StackPanel>
+                                    </UniformGrid>
+                                </Grid>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,16,0,0"><Button Content="增加型号" Style="{StaticResource ActionButtonStyle}"/><Button Content="删除型号" Margin="8,0,0,0" Style="{StaticResource ActionButtonStyle}"/><Button Content="修改数据" Tag="型号参数" Margin="8,0,0,0" Style="{StaticResource PrimaryActionButtonStyle}" Click="Save_Click"/></StackPanel>
+                            </StackPanel>
+                        </Border>
+                    </ScrollViewer>
+
+                    <ScrollViewer x:Name="CommPanel" Visibility="Collapsed" VerticalScrollBarVisibility="Auto">
+                        <StackPanel Width="960" HorizontalAlignment="Left" VerticalAlignment="Top">
+                            <TextBlock Text="通讯设置" FontSize="17" FontWeight="SemiBold"/><TextBlock Text="分别配置台位控制、功率分析和温度采集设备。" Margin="0,5,0,16" Foreground="{DynamicResource MutedBrush}"/>
+                            <UniformGrid Columns="3">
+                                <Border Style="{StaticResource DeviceCardStyle}"><StackPanel><Border Width="46" Height="46" HorizontalAlignment="Left" Background="{DynamicResource AccentSoftBrush}" CornerRadius="12"><TextBlock Text="PLC" Foreground="{DynamicResource AccentBrush}" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border><TextBlock Text="PLC 控制器" FontSize="15" FontWeight="SemiBold" Margin="0,12,0,2"/><TextBlock Text="台位逻辑控制与联锁" Foreground="{DynamicResource MutedBrush}" FontSize="11"/><StackPanel Orientation="Horizontal" Margin="0,10,0,16"><Ellipse Width="7" Height="7" Fill="{DynamicResource BadBrush}" Margin="0,0,7,0"/><TextBlock Text="未连接" Foreground="{DynamicResource BadBrush}" FontSize="11"/></StackPanel><TextBlock Text="IP 地址" Style="{StaticResource SettingsLabelStyle}"/><TextBox Text="192.168.1.10" Style="{StaticResource SettingsInputStyle}"/><TextBlock Text="端口" Style="{StaticResource SettingsLabelStyle}" Margin="0,12,0,6"/><TextBox Text="502" Style="{StaticResource SettingsInputStyle}"/><Button Content="连接" Margin="0,16,0,0" Style="{StaticResource PrimaryActionButtonStyle}" Click="TestConnection_Click"/></StackPanel></Border>
+                                <Border Style="{StaticResource DeviceCardStyle}"><StackPanel><Border Width="46" Height="46" HorizontalAlignment="Left" Background="{DynamicResource AccentSoftBrush}" CornerRadius="12"><TextBlock Text="WT" Foreground="{DynamicResource AccentBrush}" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border><TextBlock Text="WT3K 功率分析仪" FontSize="15" FontWeight="SemiBold" Margin="0,12,0,2"/><TextBlock Text="电气参数高速采集" Foreground="{DynamicResource MutedBrush}" FontSize="11"/><StackPanel Orientation="Horizontal" Margin="0,10,0,16"><Ellipse Width="7" Height="7" Fill="{DynamicResource GoodBrush}" Margin="0,0,7,0"/><TextBlock Text="已连接" Foreground="{DynamicResource GoodBrush}" FontSize="11"/></StackPanel><TextBlock Text="IP 地址" Style="{StaticResource SettingsLabelStyle}"/><TextBox Text="192.168.1.30" Style="{StaticResource SettingsInputStyle}"/><TextBlock Text="端口" Style="{StaticResource SettingsLabelStyle}" Margin="0,12,0,6"/><TextBox Text="5025" Style="{StaticResource SettingsInputStyle}"/><Button Content="重新连接" Margin="0,16,0,0" Style="{StaticResource ActionButtonStyle}" Click="TestConnection_Click"/></StackPanel></Border>
+                                <Border Style="{StaticResource SectionCardStyle}"><StackPanel><Border Width="46" Height="46" HorizontalAlignment="Left" Background="{DynamicResource AccentSoftBrush}" CornerRadius="12"><TextBlock Text="TP" Foreground="{DynamicResource AccentBrush}" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border><TextBlock Text="TP700 温度采集" FontSize="15" FontWeight="SemiBold" Margin="0,12,0,2"/><TextBlock Text="被试电机温度通道采集" Foreground="{DynamicResource MutedBrush}" FontSize="11"/><StackPanel Orientation="Horizontal" Margin="0,10,0,16"><Ellipse Width="7" Height="7" Fill="{DynamicResource BadBrush}" Margin="0,0,7,0"/><TextBlock Text="未连接" Foreground="{DynamicResource BadBrush}" FontSize="11"/></StackPanel><TextBlock Text="IP 地址" Style="{StaticResource SettingsLabelStyle}"/><TextBox Text="192.168.1.75" Style="{StaticResource SettingsInputStyle}"/><TextBlock Text="端口" Style="{StaticResource SettingsLabelStyle}" Margin="0,12,0,6"/><TextBox Text="2000" Style="{StaticResource SettingsInputStyle}"/><Button Content="连接" Margin="0,16,0,0" Style="{StaticResource PrimaryActionButtonStyle}" Click="TestConnection_Click"/></StackPanel></Border>
+                            </UniformGrid>
+                            <Border Margin="0,16,0,0" Padding="14" Background="{DynamicResource AccentSoftBrush}" CornerRadius="10"><TextBlock Text="ⓘ  修改通讯参数后建议重新启动程序，并确认设备已上电、网络畅通。" Foreground="{DynamicResource MutedBrush}"/></Border>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,14,0,0"><Button Content="退出" Style="{StaticResource ActionButtonStyle}"/><Button Content="确定" Tag="通讯设置" Margin="8,0,0,0" Style="{StaticResource PrimaryActionButtonStyle}" Click="Save_Click"/></StackPanel>
+                        </StackPanel>
+                    </ScrollViewer>
+
+                    <ScrollViewer x:Name="TempPanel" Visibility="Collapsed" VerticalScrollBarVisibility="Auto">
+                        <Border Style="{StaticResource SectionCardStyle}" Width="920" HorizontalAlignment="Left" VerticalAlignment="Top">
+                            <StackPanel>
+                                <TextBlock Text="温度配置" FontSize="17" FontWeight="SemiBold"/><TextBlock Text="启用测温点并分配实际采集通道。" Margin="0,5,0,16" Foreground="{DynamicResource MutedBrush}"/>
+                                <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="100"/><ColumnDefinition Width="180"/></Grid.ColumnDefinitions><Grid.RowDefinitions><RowDefinition Height="36"/><RowDefinition Height="46"/><RowDefinition Height="46"/><RowDefinition Height="46"/><RowDefinition Height="46"/></Grid.RowDefinitions>
+                                    <Border Grid.ColumnSpan="3" Background="{DynamicResource MetricBrush}" CornerRadius="7"/><TextBlock Text="通道名称" Margin="12,0" VerticalAlignment="Center" FontWeight="SemiBold"/><TextBlock Grid.Column="1" Text="启用" VerticalAlignment="Center" FontWeight="SemiBold"/><TextBlock Grid.Column="2" Text="采集通道" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                                    <TextBlock Grid.Row="1" Text="定子绕组温度 1" Margin="12,0" VerticalAlignment="Center"/><CheckBox Grid.Row="1" Grid.Column="1" IsChecked="True" VerticalAlignment="Center" Style="{StaticResource ToggleSwitchStyle}"/><TextBox Grid.Row="1" Grid.Column="2" Text="1 通道" Margin="0,4" Style="{StaticResource SettingsInputStyle}"/>
+                                    <TextBlock Grid.Row="2" Text="定子绕组温度 2" Margin="12,0" VerticalAlignment="Center"/><CheckBox Grid.Row="2" Grid.Column="1" VerticalAlignment="Center" Style="{StaticResource ToggleSwitchStyle}"/><TextBox Grid.Row="2" Grid.Column="2" Text="—" Margin="0,4" Style="{StaticResource SettingsInputStyle}"/>
+                                    <TextBlock Grid.Row="3" Text="轴承温度 DE1" Margin="12,0" VerticalAlignment="Center"/><CheckBox Grid.Row="3" Grid.Column="1" IsChecked="True" VerticalAlignment="Center" Style="{StaticResource ToggleSwitchStyle}"/><TextBox Grid.Row="3" Grid.Column="2" Text="7 通道" Margin="0,4" Style="{StaticResource SettingsInputStyle}"/>
+                                    <TextBlock Grid.Row="4" Text="环境温度" Margin="12,0" VerticalAlignment="Center"/><CheckBox Grid.Row="4" Grid.Column="1" IsChecked="True" VerticalAlignment="Center" Style="{StaticResource ToggleSwitchStyle}"/><TextBox Grid.Row="4" Grid.Column="2" Text="10 通道" Margin="0,4" Style="{StaticResource SettingsInputStyle}"/>
+                                </Grid>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,18,0,0"><Button Content="退出操作" Style="{StaticResource ActionButtonStyle}"/><Button Content="确定配置" Tag="温度配置" Margin="8,0,0,0" Style="{StaticResource PrimaryActionButtonStyle}" Click="Save_Click"/></StackPanel>
+                            </StackPanel>
+                        </Border>
+                    </ScrollViewer>
+                </Grid>
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>

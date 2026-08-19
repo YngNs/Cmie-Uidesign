@@ -1,0 +1,60 @@
+<UserControl x:Class="Cmie.MotorTest.Wpf.Views.Project.DockChipBar"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Visibility="Collapsed">
+    <UserControl.Resources>
+        <Style x:Key="DockIconButtonStyle" TargetType="Button">
+            <Setter Property="Width" Value="38"/>
+            <Setter Property="Height" Value="38"/>
+            <Setter Property="Margin" Value="5,4"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="Foreground" Value="{DynamicResource MutedBrush}"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Chrome" Background="{TemplateBinding Background}" CornerRadius="8">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Chrome" Property="Background" Value="{DynamicResource AccentSoftBrush}"/>
+                                <Setter Property="Foreground" Value="{DynamicResource AccentBrush}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+
+    <Border Background="{DynamicResource PanelBrush}" BorderBrush="{DynamicResource LineBrush}"
+            BorderThickness="1" CornerRadius="10" Padding="0,4" VerticalAlignment="Top">
+        <StackPanel>
+            <Button x:Name="TreeChip" Visibility="Collapsed" ToolTip="展开试验列表"
+                    Style="{StaticResource DockIconButtonStyle}" Click="TreeChip_Click">
+                <Grid Width="20" Height="20">
+                    <Rectangle Width="16" Height="13" RadiusX="2" RadiusY="2"
+                               Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                               StrokeThickness="1.5"/>
+                    <StackPanel Margin="5,5,0,0">
+                        <Rectangle Width="7" Height="1.3" HorizontalAlignment="Left"
+                                   Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"/>
+                        <Rectangle Width="7" Height="1.3" Margin="0,3,0,0" HorizontalAlignment="Left"
+                                   Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"/>
+                    </StackPanel>
+                </Grid>
+            </Button>
+            <Button x:Name="MetricsChip" Visibility="Collapsed" ToolTip="展开实时数据"
+                    Style="{StaticResource DockIconButtonStyle}" Click="MetricsChip_Click">
+                <Grid Width="20" Height="20">
+                    <Polyline Points="1,11 5,11 8,5 12,16 15,9 19,9"
+                              Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                              StrokeThickness="1.7" StrokeLineJoin="Round"/>
+                </Grid>
+            </Button>
+        </StackPanel>
+    </Border>
+</UserControl>

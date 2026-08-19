@@ -1,0 +1,52 @@
+<UserControl x:Class="Cmie.MotorTest.Wpf.Views.ProjectPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:project="clr-namespace:Cmie.MotorTest.Wpf.Views.Project"
+             Style="{StaticResource PageRootStyle}"
+             Loaded="ProjectPage_Loaded">
+    <Grid Margin="12,10,12,10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="60"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="220"/>
+                <ColumnDefinition Width="18"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <StackPanel>
+                <TextBlock Foreground="{DynamicResource MutedBrush}" FontSize="11">
+                    <Run Text="工作区 / "/><Run Text="试验项目" Foreground="{DynamicResource AccentBrush}"/>
+                </TextBlock>
+                <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                    <TextBlock Text="试验项目" Style="{StaticResource HeadingTextStyle}" FontSize="24"
+                               Foreground="{DynamicResource TextBrush}"/>
+                    <Border Margin="12,3,0,3" Padding="9,0" CornerRadius="10"
+                            Background="{DynamicResource AccentSoftBrush}">
+                        <TextBlock x:Name="ProjectIdText" VerticalAlignment="Center" FontSize="11"
+                                   Foreground="{DynamicResource AccentBrush}"/>
+                    </Border>
+                </StackPanel>
+            </StackPanel>
+            <project:PinnedMetricsBar x:Name="HeaderPinnedBar" Grid.Column="2"/>
+        </Grid>
+
+        <Grid Grid.Row="1" x:Name="WorkspaceGrid">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition x:Name="DockColumn" Width="0"/>
+                <ColumnDefinition x:Name="DockGapColumn" Width="0"/>
+                <ColumnDefinition x:Name="TreeColumn" Width="228"/>
+                <ColumnDefinition x:Name="TreeGapColumn" Width="10"/>
+                <ColumnDefinition x:Name="MetricsColumn" Width="270"/>
+                <ColumnDefinition x:Name="MetricsGapColumn" Width="10"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <project:DockChipBar x:Name="DockBar" Grid.Column="0"/>
+            <project:TestTreePanel x:Name="TestTree" Grid.Column="2"/>
+            <project:CompactMetricsPanel x:Name="MetricsPanel" Grid.Column="4"/>
+            <project:StageHost x:Name="Stage" Grid.Column="6"/>
+        </Grid>
+    </Grid>
+</UserControl>
